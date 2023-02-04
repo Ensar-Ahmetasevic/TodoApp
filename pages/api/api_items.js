@@ -9,42 +9,17 @@ async function handler(req, res) {
   const db = client.db("ToDo_App");
   const todoCollection = db.collection("Items");
 
-  // handle updating a todo item
-  if (req.method === "PUT") {
-    const { id, text } = req.body;
-
-    if (!text) {
-      res.status(422).json({ message: "Please enter your todo item." });
-      return;
-    }
-
-    // find and update the todo item in the database
-    try {
-      await todoCollection.updateOne(
-        { _id: ObjectId(id) },
-        { $set: { text: text } }
-      );
-
-      res.status(200).json({ message: "Todo item updated successfully." });
-    } catch (error) {
-      res.status(500).json({ message: "Failed to update todo item." });
-    }
-
-    return;
-  }
-
-  // handle creating a new todo item
+  // insert the new todo item into the database
   if (req.method === "POST") {
-    const { text } = req.body;
+    const { text, checkBox } = req.body;
 
     if (!text) {
       res.status(422).json({ message: "Please enter your todo item." });
       return;
     }
 
-    // insert the new todo item into the database
     try {
-      await todoCollection.insertOne({ text: text });
+      await todoCollection.insertOne({ text, checkBox });
 
       res.status(200).json({ message: "Todo item added successfully." });
     } catch (error) {
@@ -70,6 +45,29 @@ async function handler(req, res) {
     return;
   }
 
+  // find and update the todo item in the database
+  if (req.method === "PUT") {
+    const { id, text } = req.body;
+
+    if (!text) {
+      res.status(422).json({ message: "Please enter your todo item." });
+      return;
+    }
+
+    try {
+      await todoCollection.updateOne(
+        { _id: ObjectId(id) },
+        { $set: { text: text } }
+      );
+
+      res.status(200).json({ message: "Todo item updated successfully." });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update todo item." });
+    }
+
+    return;
+  }
+
   // handle deleting a todo item
   if (req.method === "DELETE") {
     const { id } = req.body;
@@ -85,8 +83,25 @@ async function handler(req, res) {
     return;
   }
 
-  // return error for unsupported methods
-  res.status(405).json({ message: "Method not allowed." });
+  // update checkbox
+  if (req.method === "PATCH") {
+    const { id, checkBox } = req.body;
+
+    try {
+      await todoCollection.updateOne(
+        { _id: ObjectId(id) },
+        { $set: { checkBox: checkBox } }
+      );
+      res.status(200).json({ message: "Todo item updated successfully." });
+    } catch (error) {
+      return res.status(500).json({
+        message: "Error updating checkBox",
+        error,
+      });
+    }
+  }
+  // close the MongoDB connection
+  client.close();
 }
 
 export default handler;
