@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 function HomePage() {
   const [todoItems, setTodoItems] = useState([]);
   const [editTodo, setEditTodo] = useState(null);
+  const [checkBox, setCheckBox] = useState(false);
 
   const todoInputRef = useRef();
 
@@ -13,7 +14,7 @@ function HomePage() {
 
     fetch("/api/api_items", {
       method: "POST",
-      body: JSON.stringify({ text: enteredTodo }), // sending a JSON data
+      body: JSON.stringify({ text: enteredTodo, checkBox: checkBox }), // sending a JSON data
       headers: { "Content-Type": "application/json" }, // Indicates that the request body format is JSON.
     })
       .then((response) => response.json())
@@ -21,7 +22,7 @@ function HomePage() {
       .then(window.location.reload());
   }
 
-  // displaying all items
+  // fetching all data
   useEffect(() => {
     fetch("/api/api_items")
       .then((response) => response.json())
@@ -64,6 +65,20 @@ function HomePage() {
       });
   }
 
+  // function to toggle the checkBox state
+  function toggleCheckBoxHandler(itemId, itemCheckBox) {
+    fetch("/api/api_items", {
+      method: "PATCH",
+      body: JSON.stringify({ id: itemId, checkBox: !itemCheckBox }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .then(window.location.reload());
+  }
+
   return (
     <section>
       <h2>Pleas enter your ToDo's</h2>
@@ -78,30 +93,51 @@ function HomePage() {
           <button>Add</button>
         </div>
       </form>
+      {""}
+      {""}
       <ul>
-        {todoItems.map((item) => (
-          <li key={item._id}>
-            <input
-              type="checkbox"
-              id={item._id}
-              name={item._id}
-              onChange={() =>
-                document
-                  .getElementById(item._id)
-                  .nextElementSibling.classList.toggle("checked")
-              }
-            />
-            <label
-              htmlFor={item._id}
-              className={item.isChecked ? "checked" : ""}
-            >
-              {item.text}
-            </label>
+        {todoItems
+          .filter((item) => item.checkBox === false)
+          .map((item) => (
+            <li key={item._id} style={{ listStyle: "none" }}>
+              <input
+                type="checkbox"
+                id={item._id}
+                name={item._id}
+                onChange={() => {
+                  toggleCheckBoxHandler(item._id, item.checkBox);
+                }}
+              />
+              <label htmlFor={item._id}>{item.text}</label>
 
-            <button onClick={() => updateItemHandler(item)}>Update</button>
-            <button onClick={() => deleteItemHandler(item._id)}>Delete</button>
-          </li>
-        ))}
+              <button onClick={() => updateItemHandler(item)}>Update</button>
+              <button onClick={() => deleteItemHandler(item._id)}>
+                Delete
+              </button>
+            </li>
+          ))}
+
+        {todoItems
+          .filter((item) => item.checkBox === true)
+          .map((item) => (
+            <li key={item._id} style={{ listStyle: "none" }}>
+              <input
+                type="checkbox"
+                id={item._id}
+                name={item._id}
+                onChange={() => {
+                  toggleCheckBoxHandler(item._id, item.checkBox);
+                }}
+              />
+              <label htmlFor={item._id} className={"checked"}>
+                {item.text}
+              </label>
+
+              <button onClick={() => deleteItemHandler(item._id)}>
+                Delete
+              </button>
+            </li>
+          ))}
       </ul>
 
       {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
@@ -114,10 +150,10 @@ function HomePage() {
               setEditTodo({ ...editTodo, text: event.target.value })
             }
           />
-          <button onClick={() => setEditTodo(null)}>Cancel</button>
           <button onClick={() => updateTodoItem(editTodo._id, editTodo.text)}>
             Update
           </button>
+          <button onClick={() => setEditTodo(null)}>Cancel</button>
         </form>
       ) : null}
     </section>
