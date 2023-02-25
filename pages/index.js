@@ -81,6 +81,7 @@ function HomePage() {
   );
 
   const [editTodo, setEditTodo] = useState(null);
+  const [checkBox, setCheckBox] = useState(false);
 
   function sendTextItemHandler(data) {
     // When the form is submitted, the "handleSubmit" function will automatically prevent the default form submission behavior
