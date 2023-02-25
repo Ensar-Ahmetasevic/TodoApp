@@ -16,7 +16,29 @@
 
 ** Axios ** 
 
-	pnpm install axios
+	import axios from "axios";
+
+
+	pnpm install axios --save
+		
+
+--------------------
+
+** React Hook Form **
+	import { useForm } from 'react-hook-form';
+	const { register, handleSubmit, watch, formState: { errors } } = useForm();
+
+	pnpm install react-hook-form --save
+
+--------------------
+
+** Express **
+
+	const express = require("express");
+	const app = express();
+	app.use(express.json());
+
+	pnpm install express --save
 
 --------------------
 
@@ -27,17 +49,6 @@
 	pnpm install mongodb
 	import { MongoClient } from "mongodb";
 
-
---------------------
-
-** Redux ** 
-
-	pnpm install redux-form --legacy-peer-deps
-
-
-	--> Redux Final Form
-
-	pnpm install --save final-form react-final-form
 
 --------------------
 
@@ -105,6 +116,17 @@
 
 
 --------------------
+
+** Redux ** 
+
+	pnpm install redux-form --legacy-peer-deps
+
+
+	--> Redux Final Form
+
+	pnpm install --save final-form react-final-form
+
+-------------------- 
 ** Redux **
 
 --> Redux-devtools-extension:
@@ -120,6 +142,8 @@
  	  Code importujemo u glavni (root) index file !!!
   	 
 	 import { createStore, applyMiddleware, compose } from 'redux';
+
+	 --------------------
 
 
 --------------------

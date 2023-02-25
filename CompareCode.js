@@ -1,54 +1,109 @@
-import { useRef } from "react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 
 function HomePage() {
-  const [todoItems, setTodoItems] = useState([]);
-
   const todoInputRef = useRef();
+  const queryClient = useQueryClient();
 
-  // sending entered text from the input field to DB
-  function send_Text_Item_Handler(event) {
+  const { isLoading, isError, error, data } = useQuery(
+    "todoItems",
+    async () => {
+      const res = await fetch("/api/items");
+      return res.json();
+    }
+  );
+
+  const addTodoMutation = useMutation(
+    (newTodo) =>
+      fetch("/api/items", {
+        method: "POST",
+        body: JSON.stringify(newTodo),
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => res.json()),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("todoItems");
+      },
+    }
+  );
+
+  const updateTodoMutation = useMutation(
+    (updatedTodo) =>
+      fetch("/api/items", {
+        method: "PUT",
+        body: JSON.stringify(updatedTodo),
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => res.json()),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("todoItems");
+      },
+    }
+  );
+
+  const toggleCheckBoxMutation = useMutation(
+    (updatedTodo) =>
+      fetch("/api/items", {
+        method: "PATCH",
+        body: JSON.stringify(updatedTodo),
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => res.json()),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("todoItems");
+      },
+    }
+  );
+
+  const deleteTodoMutation = useMutation(
+    (id) =>
+      fetch("/api/items", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => res.json()),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("todoItems");
+      },
+    }
+  );
+
+  const [editTodo, setEditTodo] = useState(null);
+
+  function sendTextItemHandler(event) {
     event.preventDefault();
-    const enteredTodo = todoInputRef.current.value; // extracting the entered text from the input field
+    const enteredTodo = todoInputRef.current.value;
 
-    fetch("/api/api_items", {
-      method: "POST",
-      body: JSON.stringify({ text: enteredTodo }), // sending a JSON data
-      headers: { "Content-Type": "application/json" }, // Indicates that the request body format is JSON.
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+    addTodoMutation.mutate({ text: enteredTodo, checkBox: false });
+    todoInputRef.current.value = "";
   }
 
-  // function to delete a todo item
-  function deleteItemHandler(itemId) {
-    fetch("/api/api_items", {
-      method: "DELETE",
-      body: JSON.stringify({ id: itemId }),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+  function updateItemHandler(item) {
+    setEditTodo(item);
   }
 
-  // displaying all items
-  useEffect(() => {
-    fetch("/api/api_items")
-      .then((response) => response.json())
-      .then((data) => {
-        setTodoItems(data.allItems);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  function updateTodoItem(id, text) {
+    updateTodoMutation.mutate({ id, text });
+    setEditTodo(null);
+  }
 
-  // function to edit/update a todo item
+  function toggleCheckBoxHandler(id, checkBox) {
+    toggleCheckBoxMutation.mutate({ id, checkBox: !checkBox });
+  }
+
+  function deleteItemHandler(id) {
+    deleteTodoMutation.mutate(id);
+  }
+
+  if (isLoading) return <div>Loading...</div>;
+
+  if (isError) return <div>Error: {error.message}</div>;
 
   return (
     <section>
-      <h2>Pleas enter your ToDo's</h2>
-      <form onSubmit={send_Text_Item_Handler}>
+      <h2>Please enter your ToDos</h2>
+      <form onSubmit={sendTextItemHandler}>
         <div>
           <input
             maxLength={1000}
@@ -59,16 +114,64 @@ function HomePage() {
           <button>Add</button>
         </div>
       </form>
+
       <ul>
-        {todoItems.map((item) => (
-          <li key={item._id}>
-            <input type="checkbox" id={item._id} name={item._id} value="Bike" />
-            <label htmlFor={item._id}>{item.text}</label>
-            <button>Update</button>
-            <button onClick={() => deleteItemHandler(item._id)}>Delete</button>
-          </li>
-        ))}
+        {data.allItems
+          .filter((item) => item.checkBox === false)
+          .map((item) => (
+            <li key={item.id} style={{ listStyle: "none" }}>
+              <input
+                type="checkbox"
+                id={item.id}
+                name={item.id}
+                onChange={() => {
+                  toggleCheckBoxHandler(item.id, item.checkBox);
+                }}
+              />
+              <label htmlFor={item.id}>{item.text}</label>
+
+              <button onClick={() => updateItemHandler(item)}>Update</button>
+              <button onClick={() => deleteItemHandler(item.id)}>Delete</button>
+            </li>
+          ))}
+
+        {data.allItems
+          .filter((item) => item.checkBox === true)
+          .map((item) => (
+            <li key={item.id} style={{ listStyle: "none" }}>
+              <input
+                type="checkbox"
+                id={item.id}
+                name={item.id}
+                onChange={() => {
+                  toggleCheckBoxHandler(item.id, item.checkBox);
+                }}
+              />
+              <label htmlFor={item.id} className={"checked"}>
+                {item.text}
+              </label>
+
+              <button onClick={() => deleteItemHandler(item.id)}>Delete</button>
+            </li>
+          ))}
       </ul>
+
+      {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
+      {editTodo ? ( // if "editTodo is null  it will no be visible"
+        <form>
+          <input
+            type="text"
+            value={editTodo.text}
+            onChange={(event) =>
+              setEditTodo({ ...editTodo, text: event.target.value })
+            }
+          />
+          <button onClick={() => updateTodoItem(editTodo.id, editTodo.text)}>
+            Update
+          </button>
+          <button onClick={() => setEditTodo(null)}>Cancel</button>
+        </form>
+      ) : null}
     </section>
   );
 }

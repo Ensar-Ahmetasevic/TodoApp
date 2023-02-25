@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 async function handler(req, res) {
-  // res will send back all datas from DB
+  // Sending all datas from DB
   if (req.method === "GET" && req.url === "/api/items") {
     try {
       const allItems = await prisma.todo.findMany({
@@ -24,7 +24,7 @@ async function handler(req, res) {
     return;
   }
 
-  // Creating new todos in DB
+  // Inserting new todos in DB
   if (req.method === "POST" && req.url === "/api/items") {
     const { text, checkBox } = req.body;
 
@@ -85,7 +85,7 @@ async function handler(req, res) {
     }
   }
 
-  //  toggle the checkBox state
+  //  update the checkBox state
 
   if (req.method === "PATCH" && req.url == "/api/items") {
     const { id, checkBox } = req.body;
