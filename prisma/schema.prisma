@@ -14,5 +14,10 @@ model Todo {
   id       Int    @id @default(autoincrement())
   text    String
   checkBox Boolean @default(false)
-  
+  }
+
+  model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
 }

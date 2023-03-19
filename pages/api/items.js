@@ -1,10 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const express = require("express");
-const app = express();
-app.use(express.json());
-
 async function handler(req, res) {
   // Sending all datas from DB
   if (req.method === "GET" && req.url === "/api/items") {

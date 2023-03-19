@@ -1,0 +1,3 @@
+This is a "ToDo" App made in Next.js where users can create new, update, toggle and delete existing items.
+
+This Next.js application use a PostgreSQL database and Prisma ORM on the backend. The front-end code uses React with the React Query library to fetch and mutate data from the backend API. The front-end also handles form validation with the React Hook Form library. The app is styled using Tailwind CSS.
