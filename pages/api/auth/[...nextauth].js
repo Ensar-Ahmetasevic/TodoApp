@@ -16,6 +16,27 @@ a "jwt" key which should be set to "true", so that JSON Web Tokens are being use
 automatically if we don't specify a database, and we aren't specifying a database because we handle all database access 
 manually, anyways with this specific provider but nonetheless, setting it to "true" explicitly also isn't too bad.
 */
+
+  /*
+These callbacks ensure that the userId property is added to the JSON Web Token and session objects whenever a user is
+authenticated, making it easier to retrieve the user's ID later in the application.
+*/
+
+  callbacks: {
+    async jwt(token, user) {
+      if (user?.id) {
+        token.userId = user.id;
+      }
+      return token;
+    },
+    async session(session, token) {
+      if (session.user) {
+        session.user.id = token.userId;
+      }
+      return session;
+    },
+  },
+
   session: {
     jwt: true,
   },
@@ -26,6 +47,11 @@ manually, anyways with this specific provider but nonetheless, setting it to "tr
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email,
+          },
+          select: {
+            id: true,
+            email: true,
+            password: true,
           },
         });
 
@@ -44,7 +70,9 @@ manually, anyways with this specific provider but nonetheless, setting it to "tr
 
         // If we return an object inside of authorize, we let nextAuth know that authorization succeeded
         // so that the user is logged in. And this object will then actually be encoded into that JSON Web Token.
-        return { email: user.email };
+
+        return { email: user.email, id: user.id };
+
         // We could, for example, include the user email. We should not pass the entire user object because we don't
         // wanna include the password. Even though it's hashed, we don't wanna expose that to the client. So that's the
         // object we return and that will then be encoded in a JSON Web Token.

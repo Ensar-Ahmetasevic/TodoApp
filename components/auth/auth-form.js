@@ -4,13 +4,27 @@ import { useRouter } from "next/router";
 
 import { toast } from "react-toastify";
 
-async function createUser(email, password) {
+async function createUser(email, password, userId) {
   const res = await fetch("/api/auth/signup", {
     method: "POST",
     body: JSON.stringify({ email, password }),
     headers: { "Content-Type": "application/json" },
   });
+
   const data = await res.json();
+
+  // Make another fetch request to /api/items
+  const itemsRes = await fetch("/api/items", {
+    method: "POST",
+    body: JSON.stringify({ userId }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const itemsData = await itemsRes.json();
+
+  // Do something with the items data
+  console.log(itemsData);
+
   return data;
 }
 
@@ -19,6 +33,7 @@ function AuthForm() {
   const passwordInputRef = useRef();
 
   const router = useRouter();
+  const userId = router.query.id;
 
   const [isLogin, setIsLogin] = useState(true);
 
@@ -45,13 +60,13 @@ function AuthForm() {
         password: enteredPassword,
       });
       if (!result.error) {
-        router.replace("/todo");
+        router.replace(`/todo`);
       } else {
         toast.error(result.error);
       }
     } else {
       try {
-        const result = await createUser(enteredEmail, enteredPassword);
+        const result = await createUser(enteredEmail, enteredPassword, userId);
         if (result.status) {
           toast.success(result.message, { autoClose: 2000 });
           router.replace("/");
@@ -62,6 +77,19 @@ function AuthForm() {
               autoClose: 7000,
             });
           }, 2000);
+
+          // // Make a request to the endpoint (/api/items) with the email data
+          // const response = await fetch("/api/items", {
+          //   method: "POST",
+          //   headers: { "Content-Type": "application/json" },
+          //   body: JSON.stringify({ email: enteredEmail }),
+          // });
+
+          // const data = await response.json();
+          // console.log(data);
+
+          // Include the user ID as a query parameter in the URL
+          router.replace(`/todo?id=${result.id}`);
         } else {
           toast.error(result.message);
         }

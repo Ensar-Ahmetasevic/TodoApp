@@ -1,14 +1,22 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+import { getSession } from "next-auth/client";
 
 async function handler(req, res) {
+  //
+  const session = await getSession({ req: req });
+  if (!session) {
+    res.status(401).json({ message: "Not authenticated", status: false });
+    return;
+  }
+
   // Sending all datas from DB
   if (req.method === "GET" && req.url === "/api/items") {
     try {
       const allItems = await prisma.todo.findMany({
+        where: { userId: session.user.id },
         orderBy: { id: "desc" },
       });
-
       res.status(200).json({ allItems });
     } catch (error) {
       res.status(500).json({
@@ -16,11 +24,10 @@ async function handler(req, res) {
         error: error.message,
       });
     }
-
     return;
   }
 
-  // Inserting new todos in DB
+  // Create new todos in DB
   if (req.method === "POST" && req.url === "/api/items") {
     const { text, checkBox } = req.body;
 
@@ -30,8 +37,9 @@ async function handler(req, res) {
     }
 
     try {
-      await prisma.todo.create({ data: { text, checkBox } });
-
+      await prisma.todo.create({
+        data: { text, checkBox, user: { connect: { id: session.user.id } } },
+      });
       res.status(200).json({ message: "Todo item added successfully." });
     } catch (error) {
       res
