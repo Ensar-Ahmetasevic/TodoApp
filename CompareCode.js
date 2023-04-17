@@ -1,23 +1,21 @@
 import { useState, useRef } from "react";
 import { signIn } from "next-auth/client";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
-import { authMutations } from "./auth-mutations";
 
-import LoadingSpinner from "@/helpers/loading-spiner";
+import { toast } from "react-toastify";
 import axios from "axios";
 
-// async function createUser(email, password) {
-//   try {
-//     const response = await axios.post("/api/auth/signup", { email, password });
-//     return response.data;
-//   } catch (error) {
-//     // Handle error
-//     console.error("Error creating user:", error);
-//     toast.error(error.response.data.message);
-//     throw error;
-//   }
-// }
+async function createUser(email, password) {
+  try {
+    const response = await axios.post("/api/auth/signup", { email, password });
+    return response.data;
+  } catch (error) {
+    // Handle error
+    console.error("Error creating user:", error);
+    toast.error(error.response.data.message);
+    throw error;
+  }
+}
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -26,8 +24,6 @@ function AuthForm() {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const router = useRouter();
-
-  const { createUser } = authMutations();
 
   // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
   function switchAuthModeHandler() {
@@ -57,7 +53,7 @@ function AuthForm() {
       }
     } else {
       try {
-        const result = await createUser.mutate(enteredEmail, enteredPassword);
+        const result = await createUser(enteredEmail, enteredPassword);
         if (result.status) {
           toast.success(result.message, { autoClose: 2000 });
           router.replace("/");
@@ -128,13 +124,7 @@ function AuthForm() {
             onClick={switchAuthModeHandler}
             className="text-s text-blue-300 hover:text-blue-500  mt-2 sm:mt-0"
           >
-            {createUser.isLoading ? (
-              <LoadingSpinner />
-            ) : isLogin ? (
-              "Create new account"
-            ) : (
-              "Login with existing account"
-            )}
+            {isLogin ? "Create new account" : "Login with existing account"}
           </button>
         </div>
       </form>

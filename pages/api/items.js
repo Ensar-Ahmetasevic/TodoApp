@@ -101,7 +101,10 @@ async function handler(req, res) {
       });
       res
         .status(200)
-        .json({ message: "Valu of checkBox has been successfully updated." });
+        .json({
+          message: "Valu of checkBox has been successfully updated.",
+          checkBox,
+        });
     } catch (error) {
       res.status(500).json({
         message: "Failed to update the value of checkBox.",

@@ -1,21 +1,28 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { getSession } from "next-auth/client";
-import { useTodoItems } from "@/helpers/useApi";
+import { TodoMutations } from "@/components/todo-react-query/todo-mutations";
+
+import _ from "lodash";
+import LoadingSpinner from "@/helpers/loading-spiner";
+import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import ErrorNotification from "@/helpers/error";
 
 function HomePage() {
-  //
+  const [editTodo, setEditTodo] = useState(null);
+  const [deletingItemId, setDeletingItemId] = useState(null);
+  const [updateItemId, setUpdateItemId] = useState(null);
+
   const {
     isLoading,
     isError,
     error,
     data,
-    addTodoMutation,
+    createTodoMutation,
     updateTodoMutation,
     toggleCheckBoxMutation,
     deleteTodoMutation,
-  } = useTodoItems();
+  } = TodoMutations();
 
   const {
     register,
@@ -24,14 +31,10 @@ function HomePage() {
     formState: { errors },
   } = useForm();
 
-  const [editTodo, setEditTodo] = useState(null);
-
   function sendTextItemHandler(data) {
-    // When the form is submitted, the "handleSubmit" function will automatically prevent the default form submission behavior
-    // So we don't need to call "event.preventDefault()" when using the React Hook Form.
     const enteredTodo = data.todoInput;
 
-    addTodoMutation.mutate({ text: enteredTodo, checkBox: false });
+    createTodoMutation.mutate({ text: enteredTodo, checkBox: false });
     reset(); // Reset the form after submission
   }
 
@@ -40,6 +43,7 @@ function HomePage() {
   }
 
   function updateTodoItem(id, text) {
+    setUpdateItemId(id);
     updateTodoMutation.mutate({ id, text });
     setEditTodo(null);
   }
@@ -49,12 +53,13 @@ function HomePage() {
   }
 
   function deleteItemHandler(id) {
+    setDeletingItemId(id);
     deleteTodoMutation.mutate(id);
   }
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <LoadingSpinner />;
 
-  if (isError) return <div>Error: {error.message}</div>;
+  if (isError) return <ErrorNotification error={error} />;
 
   return (
     <section>
@@ -72,7 +77,7 @@ function HomePage() {
             {...register("todoInput", { required: true })}
           />
           <button className="ml-4 px-2 border-2 rounded-md hover:bg-sky-700">
-            Add
+            {createTodoMutation.isLoading ? <LoadingSpinnerButton /> : "Add"}
           </button>
         </div>
         <div className="mt-2 italic text-gray-300 text-sm">
@@ -81,70 +86,70 @@ function HomePage() {
       </form>
 
       <ul>
-        {data.allItems
-          .filter((item) => item.checkBox === false)
-          .map((item) => (
-            <li className="mb-3" key={item.id} style={{ listStyle: "none" }}>
-              <input
-                className="mr-1 mb-2"
-                type="checkbox"
-                id={item.id}
-                name={item.id}
-                onChange={() => {
-                  toggleCheckBoxHandler(item.id, item.checkBox);
-                }}
-              />
-              <label className="mx-1 text-xl" htmlFor={item.id}>
-                {item.text}
-              </label>
+        {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
+          <li className="mb-3" key={item.id} style={{ listStyle: "none" }}>
+            <input
+              className="mr-1 mb-2"
+              type="checkbox"
+              id={item.id}
+              name={item.id}
+              checked={item.checkBox} // enables the checkbox to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
+              onChange={() => {
+                toggleCheckBoxHandler(item.id, item.checkBox);
+              }}
+            />
+            <label
+              className={`mx-1 text-xl ${item.checkBox ? "checked" : ""}`}
+              htmlFor={item.checkBox.toString()}
+              // If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
+            >
+              {item.text}
+            </label>
 
-              <button
-                className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
-                onClick={() => updateItemHandler(item)}
-              >
-                Update
-              </button>
+            {item.checkBox ? (
               <button
                 className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
                 onClick={() => deleteItemHandler(item.id)}
               >
-                Delete
+                {deleteTodoMutation.isLoading && deletingItemId == item.id ? (
+                  <LoadingSpinnerButton />
+                ) : (
+                  "Delete"
+                )}
               </button>
-            </li>
-          ))}
-
-        {data.allItems
-          .filter((item) => item.checkBox === true)
-          .map((item) => (
-            <li key={item.id} style={{ listStyle: "none" }}>
-              <input
-                className="mr-1 mb-2"
-                type="checkbox"
-                id={item.id}
-                name={item.id}
-                onChange={() => {
-                  toggleCheckBoxHandler(item.id, item.checkBox);
-                }}
-              />
-              <label htmlFor={item.id} className={"checked mx-1 text-xl"}>
-                {item.text}
-              </label>
-
-              <button
-                className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
-                onClick={() => deleteItemHandler(item.id)}
-              >
-                Delete
-              </button>
-            </li>
-          ))}
+            ) : (
+              <>
+                <button
+                  className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+                  onClick={() => updateItemHandler(item)}
+                >
+                  {updateTodoMutation.isLoading && updateItemId === item.id ? (
+                    <LoadingSpinnerButton />
+                  ) : (
+                    "Update"
+                  )}
+                </button>
+                <button
+                  className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
+                  onClick={() => deleteItemHandler(item.id)}
+                >
+                  {deleteTodoMutation.isLoading && deletingItemId == item.id ? (
+                    <LoadingSpinnerButton />
+                  ) : (
+                    "Delete"
+                  )}
+                </button>
+              </>
+            )}
+          </li>
+        ))}
       </ul>
 
       {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
-      {editTodo ? ( // if "editTodo is null  it will no be visible"
+      {editTodo ? ( // if "editTodo" is null it will no be visible"
         <form className="mt-5">
           <input
-            className="px-10 py-1 font-bold text-slate-800 rounded-md border-2"
+            className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
             type="text"
             value={editTodo.text}
             onChange={(event) =>

@@ -1,31 +1,43 @@
 import ProfileForm from "./profile-form";
-import { useState } from "react";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "react-query";
+import axios from "axios";
 
 function UserProfile() {
-  async function changePasswordHandler(passwordData) {
-    const response = await fetch("/api/user/change-password", {
-      method: "PATCH",
-      body: JSON.stringify(passwordData),
-      headers: {
-        "Content-Type": "application/json",
+  const queryClient = useQueryClient();
+
+  const changePasswordMutation = useMutation(
+    async (passwordData) => {
+      try {
+        const response = await axios.patch(
+          "/api/user/change-password",
+          passwordData
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Failed to change password:", error);
+        toast.error(
+          `Failed to change password: ${error.response.data.message}`
+        );
+        throw error; // Throw the error to trigger onError callback
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("userProfile");
+        toast.success("You have successfully changed your password.", {
+          autoClose: 3000,
+        });
       },
-    });
-
-    const data = await response.json();
-
-    if (data.status === true) {
-      toast.success(data.message);
-    } else {
-      toast.error(data.message);
     }
-  }
+  );
 
   return (
     <section>
       <h1 className="text-3xl text-center font-bold mb-8">Your User Profile</h1>
 
-      <ProfileForm onChangePassword={changePasswordHandler} />
+      <ProfileForm onChangePassword={changePasswordMutation} />
+      {/*passing the "changePasswordMutation" object from the "useMutation" hook as a "prop" to the "ProfileForm" component:*/}
     </section>
   );
 }

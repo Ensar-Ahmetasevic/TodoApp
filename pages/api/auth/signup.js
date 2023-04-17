@@ -31,7 +31,6 @@ async function handlerSignup(req, res) {
 
       if (existingUser) {
         // if "existingUser" is true (the email already exists in the database)
-
         res.status(422).json({ message: "User already exists", status: false }); //error
         return;
       }

@@ -1,33 +1,26 @@
 import { useState, useRef } from "react";
 import { signIn } from "next-auth/client";
 import { useRouter } from "next/router";
+
 import { toast } from "react-toastify";
-import { authMutations } from "./auth-mutations";
 
-import LoadingSpinner from "@/helpers/loading-spiner";
-import axios from "axios";
-
-// async function createUser(email, password) {
-//   try {
-//     const response = await axios.post("/api/auth/signup", { email, password });
-//     return response.data;
-//   } catch (error) {
-//     // Handle error
-//     console.error("Error creating user:", error);
-//     toast.error(error.response.data.message);
-//     throw error;
-//   }
-// }
+async function createUser(email, password) {
+  const res = await fetch("/api/auth/signup", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+    headers: { "Content-Type": "application/json" },
+  });
+  const data = await res.json();
+  return data;
+}
 
 function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
+
   const router = useRouter();
 
-  const { createUser } = authMutations();
+  const [isLogin, setIsLogin] = useState(true);
 
   // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
   function switchAuthModeHandler() {
@@ -57,7 +50,7 @@ function AuthForm() {
       }
     } else {
       try {
-        const result = await createUser.mutate(enteredEmail, enteredPassword);
+        const result = await createUser(enteredEmail, enteredPassword);
         if (result.status) {
           toast.success(result.message, { autoClose: 2000 });
           router.replace("/");
@@ -76,14 +69,11 @@ function AuthForm() {
       }
     }
   }
-  function toggleShowPassword() {
-    setShowPassword(!showPassword);
-  }
 
   return (
     <section className="max-w-md w-full mx-auto">
       <h1 className="text-3xl text-center font-bold mb-8">
-        {isLogin ? "Login" : "SignUp"}
+        {isLogin ? "Login" : "Sign Up"}
       </h1>
 
       <form className="flex flex-col space-y-4" onSubmit={submitHandler}>
@@ -99,26 +89,18 @@ function AuthForm() {
             className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
           />
         </div>
-        <div className="mb-4 relative">
+        <div>
           <label htmlFor="password" className="block mb-1 font-semibold">
             Your Password
           </label>
           <input
             ref={passwordInputRef}
-            type={!showPassword ? "password" : "text"}
+            type="password"
             id="password"
             required
-            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full pr-10" // Add pr-10 for padding on the right to accommodate the button
+            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
           />
-          <button
-            className="absolute top-8 right-2 mt-2 text-xs text-gray-400 hover:text-gray-800 hover:font-bold" // Adjust top, right, and margin properties as needed
-            type="button"
-            onClick={toggleShowPassword}
-          >
-            {showPassword ? "Hide" : "Show"}
-          </button>
         </div>
-
         <div className="flex flex-col sm:flex-row items-center justify-between">
           <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out">
             {isLogin ? "Login" : "Create Account"}
@@ -128,13 +110,7 @@ function AuthForm() {
             onClick={switchAuthModeHandler}
             className="text-s text-blue-300 hover:text-blue-500  mt-2 sm:mt-0"
           >
-            {createUser.isLoading ? (
-              <LoadingSpinner />
-            ) : isLogin ? (
-              "Create new account"
-            ) : (
-              "Login with existing account"
-            )}
+            {isLogin ? "Create new account" : "Login with existing account"}
           </button>
         </div>
       </form>
