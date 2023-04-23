@@ -1,20 +1,15 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-import { getSession } from "next-auth/client";
 
 async function handler(req, res) {
-  //
-  const session = await getSession({ req: req });
-  if (!session) {
-    res.status(401).json({ message: "Not authenticated", status: false });
-    return;
-  }
-
   // Sending all datas from DB
-  if (req.method === "GET" && req.url === "/api/items") {
+  if (req.method === "GET") {
+    const listID = parseInt(req.query.todoID);
+    // String value ('1') was provided, that is why we need convert it to Integer value using "parseInt".
+
     try {
       const allItems = await prisma.todo.findMany({
-        where: { userId: session.user.id },
+        where: { todoListId: listID },
         orderBy: { id: "desc" },
       });
       res.status(200).json({ allItems });
@@ -27,9 +22,10 @@ async function handler(req, res) {
     return;
   }
 
-  // Create new todos in DB
-  if (req.method === "POST" && req.url === "/api/items") {
+  // Create new TODOs in DB
+  if (req.method === "POST") {
     const { text, checkBox } = req.body;
+    const listID = parseInt(req.query.todoID);
 
     if (!text) {
       res.status(422).json({ message: "Please enter your todo item." });
@@ -38,7 +34,7 @@ async function handler(req, res) {
 
     try {
       await prisma.todo.create({
-        data: { text, checkBox, user: { connect: { id: session.user.id } } },
+        data: { text, checkBox, todoList: { connect: { id: listID } } },
       });
       res.status(200).json({ message: "Todo item added successfully." });
     } catch (error) {
@@ -51,7 +47,7 @@ async function handler(req, res) {
   }
 
   //  delete a todo item in DB
-  if (req.method === "DELETE" && req.url === "/api/items") {
+  if (req.method === "DELETE") {
     const { id } = req.body;
 
     try {
@@ -70,7 +66,7 @@ async function handler(req, res) {
   }
 
   // edit/update a todo item
-  if (req.method === "PUT" && req.url == "/api/items") {
+  if (req.method === "PUT") {
     const { id, text } = req.body;
 
     try {
@@ -91,7 +87,7 @@ async function handler(req, res) {
 
   //  update the checkBox state
 
-  if (req.method === "PATCH" && req.url == "/api/items") {
+  if (req.method === "PATCH") {
     const { id, checkBox } = req.body;
 
     try {
@@ -99,12 +95,10 @@ async function handler(req, res) {
         where: { id: id },
         data: { checkBox: checkBox },
       });
-      res
-        .status(200)
-        .json({
-          message: "Valu of checkBox has been successfully updated.",
-          checkBox,
-        });
+      res.status(200).json({
+        message: "Valu of checkBox has been successfully updated.",
+        checkBox,
+      });
     } catch (error) {
       res.status(500).json({
         message: "Failed to update the value of checkBox.",

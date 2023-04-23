@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { getSession } from "next-auth/client";
-import { TodoMutations } from "@/components/todo-react-query/todo-mutations";
-
 import _ from "lodash";
+
+import { TodoMutations } from "./todo-react-query/todo-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import ErrorNotification from "@/helpers/error";
 
-function HomePage() {
+function TodoForm() {
   const [editTodo, setEditTodo] = useState(null);
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [updateItemId, setUpdateItemId] = useState(null);
@@ -32,9 +31,10 @@ function HomePage() {
   } = useForm();
 
   function sendTextItemHandler(data) {
+    //"data" from react-hook-form
     const enteredTodo = data.todoInput;
 
-    createTodoMutation.mutate({ text: enteredTodo, checkBox: false });
+    createTodoMutation.mutateAsync({ text: enteredTodo, checkBox: false });
     reset(); // Reset the form after submission
   }
 
@@ -44,17 +44,17 @@ function HomePage() {
 
   function updateTodoItem(id, text) {
     setUpdateItemId(id);
-    updateTodoMutation.mutate({ id, text });
+    updateTodoMutation.mutateAsync({ id, text });
     setEditTodo(null);
   }
 
   function toggleCheckBoxHandler(id, checkBox) {
-    toggleCheckBoxMutation.mutate({ id, checkBox: !checkBox });
+    toggleCheckBoxMutation.mutateAsync({ id, checkBox: !checkBox });
   }
 
   function deleteItemHandler(id) {
     setDeletingItemId(id);
-    deleteTodoMutation.mutate(id);
+    deleteTodoMutation.mutateAsync(id);
   }
 
   if (isLoading) return <LoadingSpinner />;
@@ -63,12 +63,12 @@ function HomePage() {
 
   return (
     <section>
-      <h2 className="p-3  text-xl font-bold">Please enter your ToDo`s</h2>
+      <h2 className=" text-xl font-bold">Please enter your ToDo`s</h2>
       <form
         className="max-w-md mx-auto"
         onSubmit={handleSubmit(sendTextItemHandler)}
       >
-        <div className="mb-6 flex">
+        <div className=" mt-2 mb-6 flex">
           <input
             className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
             type="text"
@@ -76,7 +76,11 @@ function HomePage() {
             maxLength={1000}
             {...register("todoInput", { required: true })}
           />
-          <button className="ml-4 px-2 border-2 rounded-md hover:bg-sky-700">
+          <button
+            className="ml-4 p-2 border-2 rounded-md hover:bg-sky-700"
+            type="submit"
+            disabled={createTodoMutation.isLoading}
+          >
             {createTodoMutation.isLoading ? <LoadingSpinnerButton /> : "Add"}
           </button>
         </div>
@@ -87,6 +91,7 @@ function HomePage() {
 
       <ul>
         {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
+          // first sort "items" wher "checkBox" value is "true" and then whit value "false"
           <li className="mb-3" key={item.id} style={{ listStyle: "none" }}>
             <input
               className="mr-1 mb-2"
@@ -174,21 +179,4 @@ function HomePage() {
   );
 }
 
-export async function getServerSideProps(context) {
-  const session = await getSession({ req: context.req });
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: { session },
-  };
-}
-
-export default HomePage;
+export default TodoForm;

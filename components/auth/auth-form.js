@@ -1,63 +1,70 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { signIn } from "next-auth/client";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { authMutations } from "./auth-mutations";
-
-import LoadingSpinner from "@/helpers/loading-spiner";
+import { useForm } from "react-hook-form";
 import axios from "axios";
 
-// async function createUser(email, password) {
-//   try {
-//     const response = await axios.post("/api/auth/signup", { email, password });
-//     return response.data;
-//   } catch (error) {
-//     // Handle error
-//     console.error("Error creating user:", error);
-//     toast.error(error.response.data.message);
-//     throw error;
-//   }
-// }
+import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import { authMutations } from "./auth-mutations";
+
+async function createUser(email, password) {
+  try {
+    const response = await axios.post("/api/auth/signup", { email, password });
+    return response.data;
+  } catch (error) {
+    // Handle error
+    console.error("Error creating user:", error);
+    toast.error(error.response.data.message);
+    throw error;
+  }
+}
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const emailInputRef = useRef();
-  const passwordInputRef = useRef();
   const router = useRouter();
 
-  const { createUser } = authMutations();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  // const { createUser } = authMutations();
+
+  // const emailInputRef = useRef();
+  // const passwordInputRef = useRef();
 
   // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
   function switchAuthModeHandler() {
     setIsLogin((prevState) => !prevState);
   }
-  // function switchAuthModeHandler() {
-  //   setIsLogin(function(prevState) {
-  //     return !prevState;               takes the previous value of "isLogin" and returns the opposite value.
-  //   });
-  // }
 
-  async function submitHandler(event) {
-    event.preventDefault();
-    const enteredEmail = emailInputRef.current.value;
-    const enteredPassword = passwordInputRef.current.value;
+  async function submitHandler(data) {
+    const enteredEmail = data.emailInput;
+    const enteredPassword = data.passwordInput;
 
     if (isLogin) {
+      setLoading(true);
       const result = await signIn("credentials", {
         redirect: false,
         email: enteredEmail,
         password: enteredPassword,
       });
       if (!result.error) {
-        router.replace(`/todo`);
+        router.replace(`/lists`);
       } else {
         toast.error(result.error);
+        setLoading(false);
       }
     } else {
       try {
-        const result = await createUser.mutate(enteredEmail, enteredPassword);
+        setLoading(true);
+        const result = await createUser(enteredEmail, enteredPassword);
         if (result.status) {
           toast.success(result.message, { autoClose: 2000 });
           router.replace("/");
@@ -74,8 +81,10 @@ function AuthForm() {
       } catch (error) {
         console.log(error);
       }
+      setLoading(false);
     }
   }
+
   function toggleShowPassword() {
     setShowPassword(!showPassword);
   }
@@ -86,13 +95,16 @@ function AuthForm() {
         {isLogin ? "Login" : "SignUp"}
       </h1>
 
-      <form className="flex flex-col space-y-4" onSubmit={submitHandler}>
+      <form
+        className="flex flex-col space-y-4"
+        onSubmit={handleSubmit(submitHandler)}
+      >
         <div>
           <label htmlFor="email" className="block mb-1 font-semibold">
             Your Email
           </label>
           <input
-            ref={emailInputRef}
+            {...register("emailInput", { required: true })}
             type="email"
             id="email"
             required
@@ -104,7 +116,7 @@ function AuthForm() {
             Your Password
           </label>
           <input
-            ref={passwordInputRef}
+            {...register("passwordInput", { required: true })}
             type={!showPassword ? "password" : "text"}
             id="password"
             required
@@ -120,21 +132,24 @@ function AuthForm() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-between">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out">
-            {isLogin ? "Login" : "Create Account"}
+          <button
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out"
+            disabled={loading}
+          >
+            {loading ? (
+              <LoadingSpinnerButton />
+            ) : isLogin ? (
+              "Login"
+            ) : (
+              "Create Account"
+            )}
           </button>
           <button
             type="button"
             onClick={switchAuthModeHandler}
             className="text-s text-blue-300 hover:text-blue-500  mt-2 sm:mt-0"
           >
-            {createUser.isLoading ? (
-              <LoadingSpinner />
-            ) : isLogin ? (
-              "Create new account"
-            ) : (
-              "Login with existing account"
-            )}
+            {isLogin ? "Create new account" : "Login with existing account"}
           </button>
         </div>
       </form>

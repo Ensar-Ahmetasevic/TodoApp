@@ -2,16 +2,19 @@ import { useMutation, useQueryClient } from "react-query";
 import TodoItemsQuery from "./todo-query";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 export function TodoMutations() {
   const queryClient = useQueryClient();
 
-  // ** CREATE MUTATION **
+  const router = useRouter();
+  const listID = router.query.todoListID;
 
+  // ** CREATE MUTATION **
   const createTodoMutation = useMutation(
     async (newTodo) => {
       try {
-        const response = await axios.post("/api/items", newTodo);
+        const response = await axios.post(`/api/todos/${listID}`, newTodo);
         return response.data; // Return the response data
       } catch (error) {
         console.error("Failed to create todo:", error);
@@ -36,7 +39,7 @@ export function TodoMutations() {
   const updateTodoMutation = useMutation(
     async (updatedTodo) => {
       try {
-        const response = await axios.put("/api/items", updatedTodo);
+        const response = await axios.put(`/api/todos/${listID}`, updatedTodo);
         return response.data;
       } catch (error) {
         console.error("Failed to update todo:", error);
@@ -57,7 +60,7 @@ export function TodoMutations() {
   const toggleCheckBoxMutation = useMutation(
     async (updatedTodo) => {
       try {
-        const response = await axios.patch("/api/items", updatedTodo);
+        const response = await axios.patch(`/api/todos/${listID}`, updatedTodo);
         return response.data;
       } catch (error) {
         console.error("Failed to complete todo:", error);
@@ -81,7 +84,9 @@ export function TodoMutations() {
   const deleteTodoMutation = useMutation(
     async (id) => {
       try {
-        const response = await axios.delete("/api/items", { data: { id } }); // Pass "id" as part of the request body
+        const response = await axios.delete(`/api/todos/${listID}`, {
+          data: { id },
+        }); // Pass "id" as part of the request body
         return response.data;
       } catch (error) {
         console.error("Failed to DELETE todo:", error);

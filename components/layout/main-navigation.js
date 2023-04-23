@@ -34,7 +34,7 @@ function MainNavigation() {
             {session && (
               <li>
                 <Link
-                  href="/todo"
+                  href="/lists"
                   className="text-gray-300 hover:text-white transition duration-300 ease-in-out"
                 >
                   Add ToDo
