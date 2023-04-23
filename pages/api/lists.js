@@ -2,8 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 import { getSession } from "next-auth/client";
 
-// localhost:3000/todo-list
-
 async function handler(req, res) {
   //
   const session = await getSession({ req: req });

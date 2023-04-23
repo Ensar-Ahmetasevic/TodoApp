@@ -24,7 +24,7 @@ model TodoList {
   checkBox    Boolean  @default(false)
   userId   Int     // foreign key
   user     User     @relation(fields: [userId], references: [id])
-  todos    Todo[]
+  todos    Todo[]  
 }
 
 model Todo {
@@ -32,6 +32,6 @@ model Todo {
   text        String
   checkBox    Boolean  @default(false)
   todoListId  Int      //  foreign key
-  todoList    TodoList @relation(fields: [todoListId], references: [id])
+  todoList    TodoList @relation(fields: [todoListId], references: [id], onDelete: Cascade)
 }
 
