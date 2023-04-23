@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import axios from "axios";
 
+//
+
 async function createUser(email, password) {
   try {
     const response = await axios.post("/api/auth/signup", { email, password });
