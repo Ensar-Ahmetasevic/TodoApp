@@ -77,6 +77,20 @@ https://github.com/fkhadra/react-toastify
 
 --------------------
 
+** PrimeReact**
+	(https://primereact.org/installation/)
+
+	pnpm install primereact
+	pnpm install primeicons
+
+	** import inside the file we want to use it:
+
+		import "primereact/resources/themes/lara-light-indigo/theme.css";        
+		import "primereact/resources/primereact.min.css";                                       
+		import 'primeicons/primeicons.css';
+
+--------------------
+
 ** Express **
 
 	const express = require("express");

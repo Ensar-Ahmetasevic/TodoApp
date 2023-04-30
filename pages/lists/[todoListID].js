@@ -1,13 +1,16 @@
-import TodoForm from "@/components/todo/todo-form";
+import TodoForm from "@/components/todo/todo-items/todo-form";
 import { getSession } from "next-auth/client";
+import { Fragment } from "react";
 
 function HomePage() {
   return (
-    <section className="flex flex-row pt-8 ">
-      <div className="center">
-        <TodoForm />
-      </div>
-    </section>
+    <Fragment>
+      <section className="  pt-8 ">
+        <div className="center">
+          <TodoForm />
+        </div>
+      </section>
+    </Fragment>
   );
 }
 

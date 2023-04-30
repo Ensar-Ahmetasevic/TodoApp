@@ -2,7 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function handler(req, res) {
-  // Sending all datas from DB
+  //
+  // Fidne all todo items from DB
   if (req.method === "GET") {
     const listID = parseInt(req.query.todoID);
     // String value ('1') was provided, that is why we need convert it to Integer value using "parseInt".

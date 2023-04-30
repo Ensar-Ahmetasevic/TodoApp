@@ -1,137 +1,237 @@
-import { useState, useRef } from "react";
-import { signIn } from "next-auth/client";
-import { useRouter } from "next/router";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import _ from "lodash";
 
-import { toast } from "react-toastify";
-import axios from "axios";
+import { TodoMutations } from "./todo-react-query/todo-mutations";
+import LoadingSpinner from "@/helpers/loading-spiner";
+import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import ErrorNotification from "@/helpers/error";
+import { URLMutations } from "../todo-aws-url/url-mutations";
+import { useS3Upload } from "next-s3-upload";
 
-//
+function TodoForm() {
+  const [editTodo, setEditTodo] = useState(null);
+  const [deletingItemId, setDeletingItemId] = useState(null);
+  const [updateItemId, setUpdateItemId] = useState(null);
+  const [addFile, setAddFile] = useState(true);
+  const [urls, setUrls] = useState([]);
 
-async function createUser(email, password) {
-  try {
-    const response = await axios.post("/api/auth/signup", { email, password });
-    return response.data;
-  } catch (error) {
-    // Handle error
-    console.error("Error creating user:", error);
-    toast.error(error.response.data.message);
-    throw error;
+  const { uploadToS3 } = useS3Upload();
+
+  const {
+    isLoading,
+    isError,
+    error,
+    data,
+    createTodoMutation,
+    updateTodoMutation,
+    toggleCheckBoxMutation,
+    deleteTodoMutation,
+  } = TodoMutations();
+
+  const { createURLMutation } = URLMutations();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  function sendTextItemHandler(data) {
+    //"data" from react-hook-form
+    const enteredTodo = data.todoInput;
+
+    createTodoMutation.mutateAsync({ text: enteredTodo, checkBox: false });
+    reset(); // Reset the form after submission
   }
-}
 
-function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const emailInputRef = useRef();
-  const passwordInputRef = useRef();
-  const router = useRouter();
-
-  // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
-  function switchAuthModeHandler() {
-    setIsLogin((prevState) => !prevState);
+  function updateItemHandler(item) {
+    setEditTodo(item);
   }
-  // function switchAuthModeHandler() {
-  //   setIsLogin(function(prevState) {
-  //     return !prevState;               takes the previous value of "isLogin" and returns the opposite value.
-  //   });
-  // }
+  function updateTodoItem(id, text) {
+    setUpdateItemId(id);
+    updateTodoMutation.mutateAsync({ id, text });
+    setEditTodo(null);
+  }
 
-  async function submitHandler(event) {
-    event.preventDefault();
-    const enteredEmail = emailInputRef.current.value;
-    const enteredPassword = passwordInputRef.current.value;
+  function toggleCheckBoxHandler(id, checkBox) {
+    toggleCheckBoxMutation.mutateAsync({ id, checkBox: !checkBox });
+  }
 
-    if (isLogin) {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: enteredEmail,
-        password: enteredPassword,
-      });
-      if (!result.error) {
-        router.replace(`/todo`);
-      } else {
-        toast.error(result.error);
-      }
-    } else {
-      try {
-        const result = await createUser(enteredEmail, enteredPassword);
-        if (result.status) {
-          toast.success(result.message, { autoClose: 2000 });
-          router.replace("/");
+  function deleteItemHandler(id) {
+    setDeletingItemId(id);
+    deleteTodoMutation.mutateAsync(id);
+  }
 
-          setTimeout(() => {
-            toast.info("Use your Email and Password to Login", {
-              position: "bottom-center",
-              autoClose: 7000,
-            });
-          }, 2000);
-        } else {
-          toast.error(result.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+  function addFileHandler() {
+    setAddFile(!addFile);
+  }
+
+  const handleFilesChange = async (e, todoID) => {
+    const target = e.target;
+    const files = Array.from(target.files);
+
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      const { url } = await uploadToS3(file);
+
+      createURLMutation.mutateAsync({ url, todoID });
+
+      setUrls((current) => [...current, url]);
     }
-  }
-  function toggleShowPassword() {
-    setShowPassword(!showPassword);
-  }
+  };
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) return <ErrorNotification error={error} />;
 
   return (
-    <section className="max-w-md w-full mx-auto">
-      <h1 className="text-3xl text-center font-bold mb-8">
-        {isLogin ? "Login" : "SignUp"}
-      </h1>
-
-      <form className="flex flex-col space-y-4" onSubmit={submitHandler}>
-        <div>
-          <label htmlFor="email" className="block mb-1 font-semibold">
-            Your Email
-          </label>
+    <section>
+      <h2 className=" text-xl font-bold">Please enter your ToDo`s</h2>
+      <form
+        className="max-w-md mx-auto"
+        onSubmit={handleSubmit(sendTextItemHandler)}
+      >
+        <div className=" mt-2 mb-6 flex">
           <input
-            ref={emailInputRef}
-            type="email"
-            id="email"
-            required
             className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
-          />
-        </div>
-        <div className="mb-4 relative">
-          <label htmlFor="password" className="block mb-1 font-semibold">
-            Your Password
-          </label>
-          <input
-            ref={passwordInputRef}
-            type={!showPassword ? "password" : "text"}
-            id="password"
-            required
-            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full pr-10" // Add pr-10 for padding on the right to accommodate the button
+            type="text"
+            placeholder="Enter a new todo item"
+            maxLength={1000}
+            {...register("todoInput", { required: true })}
           />
           <button
-            className="absolute top-8 right-2 mt-2 text-xs text-gray-400 hover:text-gray-800 hover:font-bold" // Adjust top, right, and margin properties as needed
-            type="button"
-            onClick={toggleShowPassword}
+            className="ml-4 p-2 border-2 rounded-md hover:bg-sky-700"
+            type="submit"
+            disabled={createTodoMutation.isLoading}
           >
-            {showPassword ? "Hide" : "Show"}
+            {createTodoMutation.isLoading ? <LoadingSpinnerButton /> : "Add"}
           </button>
         </div>
-
-        <div className="flex flex-col sm:flex-row items-center justify-between">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out">
-            {isLogin ? "Login" : "Create Account"}
-          </button>
-          <button
-            type="button"
-            onClick={switchAuthModeHandler}
-            className="text-s text-blue-300 hover:text-blue-500  mt-2 sm:mt-0"
-          >
-            {isLogin ? "Create new account" : "Login with existing account"}
-          </button>
+        <div className="mt-2 italic text-gray-300 text-sm">
+          {errors.todoInput && <p> This field is required </p>}
         </div>
       </form>
+
+      <ul>
+        {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
+          // first sort "items" wher "checkBox" value is "true" and then whit value "false"
+          <li className="mb-3" key={item.id} style={{ listStyle: "none" }}>
+            <input
+              className="mr-1 mb-2"
+              type="checkbox"
+              id={item.id}
+              name={item.id}
+              checked={item.checkBox} // enables the checkbox to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
+              onChange={() => {
+                toggleCheckBoxHandler(item.id, item.checkBox);
+              }}
+            />
+            <label
+              className={`mx-1 text-xl ${item.checkBox ? "checked" : ""}`}
+              htmlFor={item.checkBox.toString()}
+              // If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
+            >
+              {item.text}
+            </label>
+
+            {item.checkBox ? (
+              <button
+                className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
+                onClick={() => deleteItemHandler(item.id)}
+              >
+                {deleteTodoMutation.isLoading && deletingItemId == item.id ? (
+                  <LoadingSpinnerButton />
+                ) : (
+                  "Delete"
+                )}
+              </button>
+            ) : (
+              <>
+                <button
+                  className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+                  onClick={() => updateItemHandler(item)}
+                >
+                  {updateTodoMutation.isLoading && updateItemId === item.id ? (
+                    <LoadingSpinnerButton />
+                  ) : (
+                    "Update"
+                  )}
+                </button>
+                <button
+                  className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
+                  onClick={() => deleteItemHandler(item.id)}
+                >
+                  {deleteTodoMutation.isLoading && deletingItemId == item.id ? (
+                    <LoadingSpinnerButton />
+                  ) : (
+                    "Delete"
+                  )}
+                </button>
+                <button
+                  className="ml-2 px-2 border-2 rounded-md  hover:bg-green-600"
+                  onClick={() => {
+                    addFileHandler();
+                  }}
+                >
+                  {addFile ? "Add File" : "Cancel"}
+                </button>
+
+                {!addFile ? (
+                  <input
+                    type="file"
+                    name="file"
+                    multiple={true}
+                    onChange={(e) => handleFilesChange(e, item.id)}
+                  />
+                ) : (
+                  ""
+                )}
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
+      {editTodo ? ( // if "editTodo" is null it will no be visible"
+        <form className="mt-5">
+          <input
+            className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
+            type="text"
+            value={editTodo.text}
+            onChange={(event) =>
+              setEditTodo({ ...editTodo, text: event.target.value })
+            }
+          />
+          <button
+            className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+            onClick={() => updateTodoItem(editTodo.id, editTodo.text)}
+          >
+            Update
+          </button>
+          <button
+            className="ml-2 mr-1 px-1 border-2 rounded-md  hover:bg-slate-500"
+            onClick={() => setEditTodo(null)}
+          >
+            Cancel
+          </button>
+        </form>
+      ) : null}
+
+      {!addFile ? (
+        <div>
+          {urls.map((url, index) => (
+            <div key={url}>
+              File {index}: {url}
+            </div>
+          ))}
+        </div>
+      ) : (
+        false
+      )}
     </section>
   );
 }
 
-export default AuthForm;
+export default TodoForm;

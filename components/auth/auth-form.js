@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import { authMutations } from "./auth-mutations";
 
 async function createUser(email, password) {
   try {
@@ -33,11 +32,6 @@ function AuthForm() {
     reset,
     formState: { errors },
   } = useForm();
-
-  // const { createUser } = authMutations();
-
-  // const emailInputRef = useRef();
-  // const passwordInputRef = useRef();
 
   // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
   function switchAuthModeHandler() {

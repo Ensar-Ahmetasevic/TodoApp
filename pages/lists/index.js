@@ -1,4 +1,4 @@
-import TodoList from "@/components/todo/todo-list-components/todo-list-form";
+import TodoList from "@/components/todo/todo-lists/todo-list-components/todo-list-form";
 import { getSession } from "next-auth/client";
 
 function TodoListsHP() {

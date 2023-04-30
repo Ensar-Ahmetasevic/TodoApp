@@ -6,11 +6,22 @@ import { TodoMutations } from "./todo-react-query/todo-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import ErrorNotification from "@/helpers/error";
+import { URLMutations } from "../todo-aws-url/url-mutations";
+import { useS3Upload } from "next-s3-upload";
+import AwsUrlQuery from "../todo-aws-url/url-react-query";
 
 function TodoForm() {
   const [editTodo, setEditTodo] = useState(null);
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [updateItemId, setUpdateItemId] = useState(null);
+  const [addFile, setAddFile] = useState(true);
+  const [URLitemID, setURLItemID] = useState(null);
+  let [imageUrl, setImageUrl] = useState();
+
+  const { uploadToS3 } = useS3Upload();
+
+  const { URLdata } = AwsUrlQuery(URLitemID);
+  console.log("Ovo je:", URLdata);
 
   const {
     isLoading,
@@ -22,6 +33,8 @@ function TodoForm() {
     toggleCheckBoxMutation,
     deleteTodoMutation,
   } = TodoMutations();
+
+  const { createURLMutation } = URLMutations();
 
   const {
     register,
@@ -41,7 +54,6 @@ function TodoForm() {
   function updateItemHandler(item) {
     setEditTodo(item);
   }
-
   function updateTodoItem(id, text) {
     setUpdateItemId(id);
     updateTodoMutation.mutateAsync({ id, text });
@@ -57,8 +69,20 @@ function TodoForm() {
     deleteTodoMutation.mutateAsync(id);
   }
 
-  if (isLoading) return <LoadingSpinner />;
+  function addFileHandler(itemID) {
+    setURLItemID(itemID);
+    setAddFile(!addFile);
+  }
 
+  const handleFilesChange = async (e, todoID) => {
+    let file = e.target.files[0];
+    let { url } = await uploadToS3(file);
+
+    createURLMutation.mutateAsync({ url, todoID });
+    setImageUrl(url);
+  };
+
+  if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorNotification error={error} />;
 
   return (
@@ -116,7 +140,7 @@ function TodoForm() {
                 className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
                 onClick={() => deleteItemHandler(item.id)}
               >
-                {deleteTodoMutation.isLoading && deletingItemId == item.id ? (
+                {deleteTodoMutation.isLoading && deletingItemId === item.id ? (
                   <LoadingSpinnerButton />
                 ) : (
                   "Delete"
@@ -144,6 +168,35 @@ function TodoForm() {
                     "Delete"
                   )}
                 </button>
+
+                {addFile && (
+                  <button
+                    className="ml-2 px-2 border-2 rounded-md hover:bg-green-600"
+                    onClick={() => addFileHandler(item.id)}
+                  >
+                    Add File
+                  </button>
+                )}
+
+                {!addFile && URLitemID === item.id && (
+                  <div className="ml-2">
+                    <button
+                      className="px-2 border-2 rounded-md hover:bg-slate-500"
+                      onClick={() => setAddFile(true)}
+                    >
+                      Cancel
+                    </button>
+                    <input
+                      className=" ml-5"
+                      type="file"
+                      name="file"
+                      onChange={(e) => handleFilesChange(e, item.id)}
+                    />
+                    <div>
+                      <h1>file</h1>
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </li>
@@ -175,6 +228,8 @@ function TodoForm() {
           </button>
         </form>
       ) : null}
+
+      {!addFile ? <div>{imageUrl && <img src={imageUrl.url} />}</div> : false}
     </section>
   );
 }
