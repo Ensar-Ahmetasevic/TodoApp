@@ -23,6 +23,8 @@ function TodoForm() {
   const { data: URLdata } = AwsUrlQuery(URLitemID);
   console.log("Ovo je:", URLdata);
 
+  const { createURLMutation } = URLMutations();
+
   const {
     isLoading,
     isError,
@@ -33,8 +35,6 @@ function TodoForm() {
     toggleCheckBoxMutation,
     deleteTodoMutation,
   } = TodoMutations();
-
-  const { createURLMutation } = URLMutations();
 
   const {
     register,
