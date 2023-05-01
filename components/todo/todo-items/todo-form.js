@@ -10,6 +10,12 @@ import { URLMutations } from "../todo-aws-url/url-mutations";
 import { useS3Upload } from "next-s3-upload";
 import AwsUrlQuery from "../todo-aws-url/url-react-query";
 
+function UrlDataComponent({ URLitemID }) {
+  const { URLdata } = AwsUrlQuery(URLitemID);
+
+  // render the component using URLdata here
+}
+
 function TodoForm() {
   const [editTodo, setEditTodo] = useState(null);
   const [deletingItemId, setDeletingItemId] = useState(null);
@@ -20,7 +26,7 @@ function TodoForm() {
 
   const { uploadToS3 } = useS3Upload();
 
-  const { URLdata } = AwsUrlQuery(URLitemID);
+  const { data: URLdata } = AwsUrlQuery(URLitemID);
   console.log("Ovo je:", URLdata);
 
   const {
