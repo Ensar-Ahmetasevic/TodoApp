@@ -18,7 +18,7 @@ export function TodoMutations() {
         return response.data; // Return the response data
       } catch (error) {
         console.error("Failed to create todo:", error);
-        toast.error(`Failed to create todo: ${error.message}`);
+        toast.error(`Error: ${error.response.data.message}`);
         throw error; // Throw the error to trigger onError callback
       }
     },
@@ -43,7 +43,7 @@ export function TodoMutations() {
         return response.data;
       } catch (error) {
         console.error("Failed to update todo:", error);
-        toast.error(`Failed to update todo: ${error.message}`);
+        toast.error(`Error: ${error.response.data.message}`);
         throw error; // Throw the error to trigger onError callback
       }
     },
@@ -64,7 +64,7 @@ export function TodoMutations() {
         return response.data;
       } catch (error) {
         console.error("Failed to complete todo:", error);
-        toast.error(`Failed to complete ToDo: ${error.message}`);
+        toast.error(`Error: ${error.response.data.message}`);
         throw error; // Throw the error to trigger onError callback
       }
     },
@@ -90,7 +90,7 @@ export function TodoMutations() {
         return response.data;
       } catch (error) {
         console.error("Failed to DELETE todo:", error);
-        toast.error(`Failed to DELETE ToDo: ${error.message}`);
+        toast.error(`Error: ${error.response.data.message}`);
         throw error; // Throw the error to trigger onError callback
       }
     },

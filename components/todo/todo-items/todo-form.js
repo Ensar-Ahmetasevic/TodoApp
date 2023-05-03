@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import _ from "lodash";
+import { useS3Upload } from "next-s3-upload";
+import Image from "next/image";
+import Link from "next/link";
+
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 import { TodoMutations } from "./todo-react-query/todo-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import ErrorNotification from "@/helpers/error";
 import { URLMutations } from "../todo-aws-url/url-mutations";
-import { useS3Upload } from "next-s3-upload";
 import AwsUrlQuery from "../todo-aws-url/url-react-query";
 
 function TodoForm() {
@@ -17,13 +23,25 @@ function TodoForm() {
   const [addFile, setAddFile] = useState(true);
   const [URLitemID, setURLItemID] = useState(null);
   let [imageUrl, setImageUrl] = useState();
+  const [fileURL, setFileURL] = useState(null);
+
+  const [slideIndex, setSlideIndex] = useState(0);
+
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    beforeChange: (current, next) => setSlideIndex(next),
+  };
 
   const { uploadToS3 } = useS3Upload();
 
   const { data: URLdata } = AwsUrlQuery(URLitemID);
-  console.log("Ovo je:", URLdata);
+  console.log("todo-form:", URLdata);
 
-  const { createURLMutation } = URLMutations();
+  const { createURLMutation, deleteURLMutation } = URLMutations();
 
   const {
     isLoading,
@@ -69,18 +87,37 @@ function TodoForm() {
     deleteTodoMutation.mutateAsync(id);
   }
 
+  // AWS URL MUTATIOS:
+
   function addFileHandler(itemID) {
     setURLItemID(itemID);
     setAddFile(!addFile);
+    setFileURL(null);
   }
 
-  const handleFilesChange = async (e, todoID) => {
+  function deleteURLHandler(URLid) {
+    console.log(URLid);
+
+    deleteURLMutation.mutateAsync(URLid);
+  }
+
+  const handleFilesChange = async (e) => {
     let file = e.target.files[0];
     let { url } = await uploadToS3(file);
-
-    createURLMutation.mutateAsync({ url, todoID });
     setImageUrl(url);
   };
+
+  function saveFilesChange(todoID) {
+    const url = imageUrl;
+    createURLMutation.mutateAsync({ url, todoID });
+  }
+
+  function showFiles() {
+    const { url } = URLdata;
+    console.log("showFiles url:", url);
+
+    setFileURL(url);
+  }
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorNotification error={error} />;
@@ -169,32 +206,37 @@ function TodoForm() {
                   )}
                 </button>
 
-                {addFile && (
-                  <button
-                    className="ml-2 px-2 border-2 rounded-md hover:bg-green-600"
-                    onClick={() => addFileHandler(item.id)}
-                  >
-                    Add File
-                  </button>
-                )}
+                <button
+                  className={`ml-2 px-2 border-2 rounded-md ${
+                    addFile ? "hover:bg-green-600" : "hover:bg-slate-500"
+                  }`}
+                  onClick={() => addFileHandler(item.id)}
+                >
+                  {addFile ? "Add File" : "Cancel"}
+                </button>
 
                 {!addFile && URLitemID === item.id && (
                   <div className="ml-2">
-                    <button
-                      className="px-2 border-2 rounded-md hover:bg-slate-500"
-                      onClick={() => setAddFile(true)}
-                    >
-                      Cancel
-                    </button>
                     <input
                       className=" ml-5"
                       type="file"
                       name="file"
-                      onChange={(e) => handleFilesChange(e, item.id)}
+                      onChange={(e) => handleFilesChange(e)}
                     />
-                    <div>
-                      <h1>file</h1>
-                    </div>
+                    <br />
+                    <button
+                      className="px-2 border-2 rounded-md hover:bg-slate-500"
+                      type="submit"
+                      onClick={() => saveFilesChange(item.id)}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="px-2 border-2 rounded-md hover:bg-slate-500"
+                      onClick={() => showFiles()}
+                    >
+                      Show My Files
+                    </button>
                   </div>
                 )}
               </>
@@ -229,7 +271,52 @@ function TodoForm() {
         </form>
       ) : null}
 
-      {!addFile ? <div>{imageUrl && <img src={imageUrl.url} />}</div> : false}
+      <>
+        {fileURL ? (
+          <div className="mt-10">
+            <h2>{`Yor number of files: ${fileURL.length}`}</h2>
+            <p>Please scroll to the side</p>
+            <input
+              onChange={(e) => setSlideIndex(e.target.value)}
+              value={slideIndex}
+              type="range"
+              min={0}
+              max={fileURL.length - 1}
+              step={1}
+              className="w-1/6"
+            />
+            <Slider {...settings}>
+              {fileURL.map((file) => (
+                <div className="w-1/8 h-1/8 p-4" key={file.id}>
+                  <div className="w-full h-full flex justify-center items-center">
+                    <Image
+                      src={file.url}
+                      alt={`${file.id}`}
+                      width={300}
+                      height={300}
+                      className="rounded-md"
+                    />
+                  </div>
+                  <div className="mt-6">
+                    <Link
+                      className="px-1 border-2 rounded-md hover:bg-green-600 mr-2"
+                      href={`${file.url}`}
+                    >
+                      Open
+                    </Link>
+                    <button
+                      className="px-1 border-2 rounded-md hover:bg-rose-600"
+                      onClick={() => deleteURLHandler(file.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          </div>
+        ) : null}
+      </>
     </section>
   );
 }

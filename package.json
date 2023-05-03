@@ -26,9 +26,14 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.43.2",
+    "react-image-gallery": "^1.2.11",
+    "react-modal-image": "^2.6.0",
+    "react-photo-gallery": "^8.0.0",
     "react-query": "^3.39.3",
     "react-query-devtools": "^2.6.3",
+    "react-slick": "^0.29.0",
     "react-toastify": "^9.1.1",
+    "slick-carousel": "^1.8.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

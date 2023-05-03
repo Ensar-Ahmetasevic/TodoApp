@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { toast } from "react-toastify";
-import AwsUrlQuery from "./url-react-query";
 
 export function URLMutations() {
   const queryClient = useQueryClient();
@@ -11,12 +10,13 @@ export function URLMutations() {
     async (URLData) => {
       try {
         const response = await axios.post("/api/file", URLData);
-        return response.data; // Return the response data
         console.log("Response from url-mutation file:", response);
+
+        return response.data; // Return the response data
       } catch (error) {
-        console.error("Failed to create todo URL:", error);
-        toast.error(`Failed to create todo URL: ${error.message}`);
-        throw error; // Throw the error to trigger onError callback
+        console.error("Failed to create file URL:", error);
+        toast.error(`Error: ${error.response.data.message}`);
+        throw error(); // Throw the error to trigger onError callback
       }
     },
     {
@@ -26,12 +26,35 @@ export function URLMutations() {
           Automatically updates the cached data with the new data, this ensures that the list of Todo URL Items
           displayed in the UI is always showing the latest data.
         */
-        toast.success("ToDo File created successfully.", { autoClose: 700 });
+        toast.success("File was created successfully.", { autoClose: 700 });
+      },
+    }
+  );
+
+  // ** DELETE MUTATION **
+
+  const deleteURLMutation = useMutation(
+    async (URLid) => {
+      try {
+        const response = await axios.delete("/api/file", { data: { URLid } });
+        return response.data;
+      } catch (error) {
+        console.error("Failed to DELETE list:", error);
+        toast.error(`Error: ${error.response.data.message}`);
+        throw error; // Throw the error to trigger onError callback
+      }
+    },
+
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("todoURL");
+        toast.success("ToDo List is successfully DELETED.", { autoClose: 700 });
       },
     }
   );
 
   return {
     createURLMutation,
+    deleteURLMutation,
   };
 }

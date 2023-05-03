@@ -16,7 +16,7 @@ export function ListMutations() {
         return response.data;
       } catch (error) {
         console.error("Failed to create new Todo List:", error);
-        toast.error(`Failed to create new Todo List: ${error.message}`);
+        toast.error(`Error: ${error.response.data.message}`);
         throw error; // Throw the error to trigger onError callback
       }
     },
@@ -37,7 +37,7 @@ export function ListMutations() {
         return response.data;
       } catch (error) {
         console.error("Failed to update list:", error);
-        toast.error(`Failed to update list: ${error.message}`);
+        toast.error(`Error: ${error.response.data.message}`);
         throw error; // Throw the error to trigger onError callback
       }
     },
@@ -58,7 +58,7 @@ export function ListMutations() {
         return response.data;
       } catch (error) {
         console.error("Failed to complete list:", error);
-        toast.error(`Failed to complete ToDo List: ${error.message}`);
+        toast.error(`Error: ${error.response.data.message}`);
         throw error; // Throw the error to trigger onError callback
       }
     },
@@ -83,7 +83,7 @@ export function ListMutations() {
         return response.data;
       } catch (error) {
         console.error("Failed to DELETE list:", error);
-        toast.error(`Failed to DELETE ToDo List: ${error.message}`);
+        toast.error(`Error: ${error.response.data.message}`);
         throw error; // Throw the error to trigger onError callback
       }
     },
