@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import _ from "lodash";
 import { useS3Upload } from "next-s3-upload";
@@ -20,12 +20,14 @@ function TodoForm() {
   const [editTodo, setEditTodo] = useState(null);
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [updateItemId, setUpdateItemId] = useState(null);
-  const [addFile, setAddFile] = useState(true);
   const [URLitemID, setURLItemID] = useState(null);
-  let [imageUrl, setImageUrl] = useState();
-  const [fileURL, setFileURL] = useState(null);
+  const [showFile, setShowFile] = useState(false);
+  const [addFile, setAddFile] = useState(true);
 
   const [slideIndex, setSlideIndex] = useState(0);
+
+  const [imageUrl, setImageUrl] = useState();
+  const { uploadToS3 } = useS3Upload();
 
   const settings = {
     dots: false,
@@ -35,8 +37,6 @@ function TodoForm() {
     slidesToScroll: 1,
     beforeChange: (current, next) => setSlideIndex(next),
   };
-
-  const { uploadToS3 } = useS3Upload();
 
   const { data: URLdata } = AwsUrlQuery(URLitemID);
   console.log("todo-form:", URLdata);
@@ -92,31 +92,28 @@ function TodoForm() {
   function addFileHandler(itemID) {
     setURLItemID(itemID);
     setAddFile(!addFile);
-    setFileURL(null);
   }
 
-  function deleteURLHandler(URLid) {
+  async function deleteURLHandler(URLid) {
     console.log(URLid);
 
-    deleteURLMutation.mutateAsync(URLid);
+    await deleteURLMutation.mutateAsync(URLid);
   }
 
   const handleFilesChange = async (e) => {
+    console.log("ovo je iz handleFilesChange");
     let file = e.target.files[0];
     let { url } = await uploadToS3(file);
     setImageUrl(url);
   };
 
-  function saveFilesChange(todoID) {
+  async function saveFilesChange(todoID) {
     const url = imageUrl;
-    createURLMutation.mutateAsync({ url, todoID });
+    await createURLMutation.mutateAsync({ url, todoID });
   }
 
   function showFiles() {
-    const { url } = URLdata;
-    console.log("showFiles url:", url);
-
-    setFileURL(url);
+    setShowFile(!showFile);
   }
 
   if (isLoading) return <LoadingSpinner />;
@@ -212,7 +209,7 @@ function TodoForm() {
                   }`}
                   onClick={() => addFileHandler(item.id)}
                 >
-                  {addFile ? "Add File" : "Cancel"}
+                  {addFile ? "Add File" : "Close"}
                 </button>
 
                 {!addFile && URLitemID === item.id && (
@@ -272,21 +269,21 @@ function TodoForm() {
       ) : null}
 
       <>
-        {fileURL ? (
+        {URLdata?.url?.length && showFile ? (
           <div className="mt-10">
-            <h2>{`Yor number of files: ${fileURL.length}`}</h2>
+            <h2>{`Yor number of files: ${URLdata.url.length}`}</h2>
             <p>Please scroll to the side</p>
             <input
               onChange={(e) => setSlideIndex(e.target.value)}
               value={slideIndex}
               type="range"
               min={0}
-              max={fileURL.length - 1}
+              max={URLdata.url.length - 1}
               step={1}
               className="w-1/6"
             />
             <Slider {...settings}>
-              {fileURL.map((file) => (
+              {URLdata.url.map((file) => (
                 <div className="w-1/8 h-1/8 p-4" key={file.id}>
                   <div className="w-full h-full flex justify-center items-center">
                     <Image

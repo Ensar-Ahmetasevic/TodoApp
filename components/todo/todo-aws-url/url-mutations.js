@@ -48,7 +48,9 @@ export function URLMutations() {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("todoURL");
-        toast.success("ToDo List is successfully DELETED.", { autoClose: 700 });
+        toast.success("Your Files is successfully DELETED.", {
+          autoClose: 700,
+        });
       },
     }
   );
