@@ -48,7 +48,7 @@ function AllLists() {
     <section>
       <ul>
         {_.sortBy(data.allLists).map((list) => (
-          <li className="mb-3" key={list.id} style={{ listStyle: "none" }}>
+          <li className="mb-5" key={list.id} style={{ listStyle: "none" }}>
             <input
               className="mr-1 mb-2"
               type="checkbox"
@@ -67,7 +67,10 @@ function AllLists() {
               {list.name}
             </label>
 
-            <Link className="" href={`/lists/${list.id}`}>
+            <Link
+              className="ml-2 p-1.5 border-2 rounded-md  hover:bg-rose-600"
+              href={`/lists/${list.id}`}
+            >
               Open
             </Link>
 

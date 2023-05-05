@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import _ from "lodash";
 import { useS3Upload } from "next-s3-upload";
@@ -23,6 +23,7 @@ function TodoForm() {
   const [URLitemID, setURLItemID] = useState(null);
   const [showFile, setShowFile] = useState(false);
   const [addFile, setAddFile] = useState(true);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const [slideIndex, setSlideIndex] = useState(0);
 
@@ -39,7 +40,6 @@ function TodoForm() {
   };
 
   const { data: URLdata } = AwsUrlQuery(URLitemID);
-  console.log("todo-form:", URLdata);
 
   const { createURLMutation, deleteURLMutation } = URLMutations();
 
@@ -92,24 +92,36 @@ function TodoForm() {
   function addFileHandler(itemID) {
     setURLItemID(itemID);
     setAddFile(!addFile);
+    setShowFile(false);
   }
 
   async function deleteURLHandler(URLid) {
-    console.log(URLid);
-
     await deleteURLMutation.mutateAsync(URLid);
   }
 
   const handleFilesChange = async (e) => {
-    console.log("ovo je iz handleFilesChange");
     let file = e.target.files[0];
     let { url } = await uploadToS3(file);
     setImageUrl(url);
+
+    // Set the selected file
+    setSelectedFile(file);
   };
 
   async function saveFilesChange(todoID) {
     const url = imageUrl;
-    await createURLMutation.mutateAsync({ url, todoID });
+
+    // Check if a file was selected
+    if (selectedFile !== null) {
+      await createURLMutation.mutateAsync({ url, todoID });
+
+      // Clear the selected file
+      setSelectedFile(null);
+
+      // Clear the input file field
+      const fileInput = document.querySelector('input[name="file"]');
+      fileInput.value = null;
+    }
   }
 
   function showFiles() {
@@ -150,7 +162,7 @@ function TodoForm() {
       <ul>
         {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
           // first sort "items" wher "checkBox" value is "true" and then whit value "false"
-          <li className="mb-3" key={item.id} style={{ listStyle: "none" }}>
+          <li className="pb-5" key={item.id} style={{ listStyle: "none" }}>
             <input
               className="mr-1 mb-2"
               type="checkbox"
@@ -209,30 +221,32 @@ function TodoForm() {
                   }`}
                   onClick={() => addFileHandler(item.id)}
                 >
-                  {addFile ? "Add File" : "Close"}
+                  {addFile ? "Add File" : "Cancel"}
                 </button>
 
                 {!addFile && URLitemID === item.id && (
-                  <div className="ml-2">
+                  <div className="ml-2 ">
                     <input
-                      className=" ml-5"
+                      className=" my-5"
                       type="file"
                       name="file"
                       onChange={(e) => handleFilesChange(e)}
                     />
                     <br />
                     <button
-                      className="px-2 border-2 rounded-md hover:bg-slate-500"
+                      className="px-2 border-2 rounded-md hover:bg-sky-700"
                       type="submit"
                       onClick={() => saveFilesChange(item.id)}
                     >
                       Save
                     </button>
                     <button
-                      className="px-2 border-2 rounded-md hover:bg-slate-500"
+                      className={`ml-2 px-2 border-2 rounded-md ${
+                        !showFile ? "hover:bg-green-600" : "hover:bg-slate-500"
+                      }`}
                       onClick={() => showFiles()}
                     >
-                      Show My Files
+                      {showFile ? "Hide My Files" : "Show My Files"}
                     </button>
                   </div>
                 )}
@@ -244,7 +258,7 @@ function TodoForm() {
 
       {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
       {editTodo ? ( // if "editTodo" is null it will no be visible"
-        <form className="mt-5">
+        <form className="mt-5 pb-20">
           <input
             className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
             type="text"
@@ -269,7 +283,7 @@ function TodoForm() {
       ) : null}
 
       <>
-        {URLdata?.url?.length && showFile ? (
+        {showFile && URLdata?.url?.length ? ( // if the ShowFile === false and if the URL array is not empty
           <div className="mt-10">
             <h2>{`Yor number of files: ${URLdata.url.length}`}</h2>
             <p>Please scroll to the side</p>

@@ -50,7 +50,6 @@ function TodoList() {
         </div>
       </form>
 
-      <h1>Your ToDo Lists:</h1>
       <AllLists />
     </section>
   );

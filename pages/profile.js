@@ -2,7 +2,11 @@ import UserProfile from "../components/profile/user-profile";
 import { getSession } from "next-auth/client";
 
 function ProfilePage(props) {
-  return <UserProfile />;
+  return (
+    <section className="mt-8">
+      <UserProfile />
+    </section>
+  );
 }
 
 export async function getServerSideProps(context) {

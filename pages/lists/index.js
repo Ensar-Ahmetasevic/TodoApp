@@ -3,10 +3,8 @@ import { getSession } from "next-auth/client";
 
 function TodoListsHP() {
   return (
-    <section className="flex flex-row pt-8 ">
-      <div className="ceneter">
-        <TodoList />
-      </div>
+    <section className="flex justify-center pt-8 ">
+      <TodoList />
     </section>
   );
 }

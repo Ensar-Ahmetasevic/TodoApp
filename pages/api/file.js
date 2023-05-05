@@ -29,7 +29,6 @@ export default async function handler(req, res) {
   // Sending all datas from DB
   if (req.method === "GET") {
     const todoId = parseInt(req.query.todoId);
-    console.log("Backend totoID:", todoId);
 
     //
     try {
@@ -38,7 +37,6 @@ export default async function handler(req, res) {
         orderBy: { id: "desc" },
       });
       res.status(200).json({ url });
-      console.log("Backend AWS URL:", url);
     } catch (error) {
       res.status(500).json({
         message: "Failed to retrive Files from DB.",

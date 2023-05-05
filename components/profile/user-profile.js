@@ -34,7 +34,9 @@ function UserProfile() {
 
   return (
     <section>
-      <h1 className="text-3xl text-center font-bold mb-8">Your User Profile</h1>
+      <h1 className="text-3xl text-center font-bold mb-8">
+        Change Your Password
+      </h1>
 
       <ProfileForm onChangePassword={changePasswordMutation} />
       {/*passing the "changePasswordMutation" object from the "useMutation" hook as a "prop" to the "ProfileForm" component:*/}

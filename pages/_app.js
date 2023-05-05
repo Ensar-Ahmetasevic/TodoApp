@@ -14,7 +14,7 @@ export default function App({ Component, pageProps }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="text-center items-center justify-center h-screen bg-gray-700 text-gray-100">
+      <div className="text-center items-center justify-center min-h-screen bg-gray-700 text-gray-100">
         <Provider session={pageProps.session}>
           <Layout>
             <ToastContainer

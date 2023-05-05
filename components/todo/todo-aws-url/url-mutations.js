@@ -10,7 +10,6 @@ export function URLMutations() {
     async (URLData) => {
       try {
         const response = await axios.post("/api/file", URLData);
-        console.log("Response from url-mutation file:", response);
 
         return response.data; // Return the response data
       } catch (error) {
