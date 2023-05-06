@@ -20,7 +20,7 @@ function TodoForm() {
   const [editTodo, setEditTodo] = useState(null);
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [updateItemId, setUpdateItemId] = useState(null);
-  const [URLitemID, setURLItemID] = useState(null);
+  const [addFileItemID, setAddFileItemID] = useState(null);
   const [showFile, setShowFile] = useState(false);
   const [addFile, setAddFile] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -39,7 +39,7 @@ function TodoForm() {
     beforeChange: (current, next) => setSlideIndex(next),
   };
 
-  const { data: URLdata } = AwsUrlQuery(URLitemID);
+  const { data: URLdata } = AwsUrlQuery(addFileItemID);
 
   const { createURLMutation, deleteURLMutation } = URLMutations();
 
@@ -90,7 +90,7 @@ function TodoForm() {
   // AWS URL MUTATIOS:
 
   function addFileHandler(itemID) {
-    setURLItemID(itemID);
+    setAddFileItemID(itemID);
     setAddFile(!addFile);
     setShowFile(false);
   }
@@ -132,202 +132,215 @@ function TodoForm() {
   if (isError) return <ErrorNotification error={error} />;
 
   return (
-    <section>
-      <h2 className=" text-xl font-bold">Please enter your ToDo`s</h2>
-      <form
-        className="max-w-md mx-auto"
-        onSubmit={handleSubmit(sendTextItemHandler)}
-      >
-        <div className=" mt-2 mb-6 flex">
-          <input
-            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
-            type="text"
-            placeholder="Enter a new todo item"
-            maxLength={1000}
-            {...register("todoInput", { required: true })}
-          />
-          <button
-            className="ml-4 p-2 border-2 rounded-md hover:bg-sky-700"
-            type="submit"
-            disabled={createTodoMutation.isLoading}
-          >
-            {createTodoMutation.isLoading ? <LoadingSpinnerButton /> : "Add"}
-          </button>
-        </div>
-        <div className="mt-2 italic text-gray-300 text-sm">
-          {errors.todoInput && <p> This field is required </p>}
-        </div>
-      </form>
-
-      <ul>
-        {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
-          // first sort "items" wher "checkBox" value is "true" and then whit value "false"
-          <li className="pb-5" key={item.id} style={{ listStyle: "none" }}>
+    <section className=" grid grid-cols-6 gap-4 ">
+      <div className=" col-start-2 col-span-4">
+        <h2 className=" text-xl font-bold">Please enter your ToDo`s</h2>
+        <form
+          className="max-w-md mx-auto"
+          onSubmit={handleSubmit(sendTextItemHandler)}
+        >
+          <div className=" mt-2 mb-6 flex">
             <input
-              className="mr-1 mb-2"
-              type="checkbox"
-              id={item.id}
-              name={item.id}
-              checked={item.checkBox} // enables the checkbox to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
-              onChange={() => {
-                toggleCheckBoxHandler(item.id, item.checkBox);
-              }}
+              className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
+              type="text"
+              placeholder="Enter a new todo item"
+              maxLength={1000}
+              {...register("todoInput", { required: true })}
             />
-            <label
-              className={`mx-1 text-xl ${item.checkBox ? "checked" : ""}`}
-              htmlFor={item.checkBox.toString()}
-              // If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
+            <button
+              className="ml-4 p-2 border-2 rounded-md hover:bg-sky-700"
+              type="submit"
+              disabled={createTodoMutation.isLoading}
             >
-              {item.text}
-            </label>
-
-            {item.checkBox ? (
-              <button
-                className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
-                onClick={() => deleteItemHandler(item.id)}
-              >
-                {deleteTodoMutation.isLoading && deletingItemId === item.id ? (
-                  <LoadingSpinnerButton />
-                ) : (
-                  "Delete"
-                )}
-              </button>
-            ) : (
-              <>
-                <button
-                  className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
-                  onClick={() => updateItemHandler(item)}
-                >
-                  {updateTodoMutation.isLoading && updateItemId === item.id ? (
-                    <LoadingSpinnerButton />
-                  ) : (
-                    "Update"
-                  )}
-                </button>
-                <button
-                  className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
-                  onClick={() => deleteItemHandler(item.id)}
-                >
-                  {deleteTodoMutation.isLoading && deletingItemId == item.id ? (
-                    <LoadingSpinnerButton />
-                  ) : (
-                    "Delete"
-                  )}
-                </button>
-
-                <button
-                  className={`ml-2 px-2 border-2 rounded-md ${
-                    addFile ? "hover:bg-green-600" : "hover:bg-slate-500"
-                  }`}
-                  onClick={() => addFileHandler(item.id)}
-                >
-                  {addFile ? "Add File" : "Cancel"}
-                </button>
-
-                {!addFile && URLitemID === item.id && (
-                  <div className="ml-2 ">
-                    <input
-                      className=" my-5"
-                      type="file"
-                      name="file"
-                      onChange={(e) => handleFilesChange(e)}
-                    />
-                    <br />
-                    <button
-                      className="px-2 border-2 rounded-md hover:bg-sky-700"
-                      type="submit"
-                      onClick={() => saveFilesChange(item.id)}
-                    >
-                      Save
-                    </button>
-                    <button
-                      className={`ml-2 px-2 border-2 rounded-md ${
-                        !showFile ? "hover:bg-green-600" : "hover:bg-slate-500"
-                      }`}
-                      onClick={() => showFiles()}
-                    >
-                      {showFile ? "Hide My Files" : "Show My Files"}
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-
-      {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
-      {editTodo ? ( // if "editTodo" is null it will no be visible"
-        <form className="mt-5 pb-20">
-          <input
-            className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
-            type="text"
-            value={editTodo.text}
-            onChange={(event) =>
-              setEditTodo({ ...editTodo, text: event.target.value })
-            }
-          />
-          <button
-            className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
-            onClick={() => updateTodoItem(editTodo.id, editTodo.text)}
-          >
-            Update
-          </button>
-          <button
-            className="ml-2 mr-1 px-1 border-2 rounded-md  hover:bg-slate-500"
-            onClick={() => setEditTodo(null)}
-          >
-            Cancel
-          </button>
-        </form>
-      ) : null}
-
-      <>
-        {showFile && URLdata?.url?.length ? ( // if the ShowFile === false and if the URL array is not empty
-          <div className="mt-10">
-            <h2>{`Yor number of files: ${URLdata.url.length}`}</h2>
-            <p>Please scroll to the side</p>
-            <input
-              onChange={(e) => setSlideIndex(e.target.value)}
-              value={slideIndex}
-              type="range"
-              min={0}
-              max={URLdata.url.length - 1}
-              step={1}
-              className="w-1/6"
-            />
-            <Slider {...settings}>
-              {URLdata.url.map((file) => (
-                <div className="w-1/8 h-1/8 p-4" key={file.id}>
-                  <div className="w-full h-full flex justify-center items-center">
-                    <Image
-                      src={file.url}
-                      alt={`${file.id}`}
-                      width={300}
-                      height={300}
-                      className="rounded-md"
-                    />
-                  </div>
-                  <div className="mt-6">
-                    <Link
-                      className="px-1 border-2 rounded-md hover:bg-green-600 mr-2"
-                      href={`${file.url}`}
-                    >
-                      Open
-                    </Link>
-                    <button
-                      className="px-1 border-2 rounded-md hover:bg-rose-600"
-                      onClick={() => deleteURLHandler(file.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </Slider>
+              {createTodoMutation.isLoading ? <LoadingSpinnerButton /> : "Add"}
+            </button>
           </div>
-        ) : null}
-      </>
+          <div className="mt-2 italic text-gray-300 text-sm">
+            {errors.todoInput && <p> This field is required </p>}
+          </div>
+        </form>
+      </div>
+      <section className=" col-start-2 col-span-4 ">
+        <ul>
+          {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
+            // first sort "items" wher "checkBox" value is "true" and then whit value "false"
+            <div className=" my-3 p-3 rounded-lg border-4 border-solid border-green-600 hover:border-green-400">
+              <li className="pb-5" key={item.id} style={{ listStyle: "none" }}>
+                <div className="mb-3">
+                  <input
+                    className="mr-1 mb-2"
+                    type="checkbox"
+                    id={item.id}
+                    name={item.id}
+                    checked={item.checkBox} // enables the checkbox to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
+                    onChange={() => {
+                      toggleCheckBoxHandler(item.id, item.checkBox);
+                    }}
+                  />
+                  <label
+                    className={`mx-1 text-xl ${item.checkBox ? "checked" : ""}`}
+                    htmlFor={item.checkBox.toString()}
+                    // If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
+                  >
+                    {item.text}
+                  </label>
+                </div>
+                <div className=" flex-row flex-initial w-1/3 py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg  ">
+                  {item.checkBox ? (
+                    <button
+                      className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
+                      onClick={() => deleteItemHandler(item.id)}
+                    >
+                      {deleteTodoMutation.isLoading &&
+                      deletingItemId === item.id ? (
+                        <LoadingSpinnerButton />
+                      ) : (
+                        "Delete"
+                      )}
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        className=" px-1 border-2 rounded-md  hover:bg-amber-400"
+                        onClick={() => updateItemHandler(item)}
+                      >
+                        {updateTodoMutation.isLoading &&
+                        updateItemId === item.id ? (
+                          <LoadingSpinnerButton />
+                        ) : (
+                          "Update"
+                        )}
+                      </button>
+                      <button
+                        className="mx-2 px-2 my-2 border-2 rounded-md  hover:bg-rose-600"
+                        onClick={() => deleteItemHandler(item.id)}
+                      >
+                        {deleteTodoMutation.isLoading &&
+                        deletingItemId == item.id ? (
+                          <LoadingSpinnerButton />
+                        ) : (
+                          "Delete"
+                        )}
+                      </button>
+
+                      <button
+                        className={` px-2 border-2 rounded-md ${
+                          addFile ? "hover:bg-green-600" : "hover:bg-slate-500"
+                        }`}
+                        onClick={() => addFileHandler(item.id)}
+                      >
+                        {addFile ? "Add File" : "Cancel"}
+                      </button>
+
+                      {!addFile && addFileItemID === item.id && (
+                        <div className="ml-2 ">
+                          <input
+                            className=" my-5"
+                            type="file"
+                            name="file"
+                            onChange={(e) => handleFilesChange(e)}
+                          />
+                          <br />
+                          <button
+                            className="px-2 border-2 rounded-md hover:bg-sky-700"
+                            type="submit"
+                            onClick={() => saveFilesChange(item.id)}
+                          >
+                            Save
+                          </button>
+                          <button
+                            className={`ml-2 px-2 border-2 rounded-md ${
+                              !showFile
+                                ? "hover:bg-green-600"
+                                : "hover:bg-slate-500"
+                            }`}
+                            onClick={() => showFiles()}
+                          >
+                            {showFile ? "Hide My Files" : "Show My Files"}
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+                {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
+                {editTodo && editTodo.id === item.id ? ( // if "editTodo" is null it will no be visible"
+                  <form className="mt-5">
+                    <input
+                      className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
+                      type="text"
+                      value={editTodo.text}
+                      onChange={(event) =>
+                        setEditTodo({ ...editTodo, text: event.target.value })
+                      }
+                    />
+                    <button
+                      className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+                      onClick={() => updateTodoItem(editTodo.id, editTodo.text)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      className="ml-2 mr-1 px-1 border-2 rounded-md  hover:bg-slate-500"
+                      onClick={() => setEditTodo(null)}
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                ) : null}
+                <>
+                  {showFile &&
+                  URLdata?.url?.length &&
+                  addFileItemID === item.id ? ( // if the ShowFile === false and if the URL array is not empty
+                    <div className="mt-10">
+                      <h2>{`Yor number of files: ${URLdata.url.length}`}</h2>
+                      <p>Please scroll to the side</p>
+                      <input
+                        onChange={(e) => setSlideIndex(e.target.value)}
+                        value={slideIndex}
+                        type="range"
+                        min={0}
+                        max={URLdata.url.length - 1}
+                        step={1}
+                        className="w-1/6"
+                      />
+                      <Slider {...settings}>
+                        {URLdata.url.map((file) => (
+                          <div className="w-1/8 h-1/8 p-4" key={file.id}>
+                            <div className="w-full h-full flex justify-center items-center">
+                              <Image
+                                src={file.url}
+                                alt={`${file.id}`}
+                                width={300}
+                                height={300}
+                                className="rounded-md"
+                              />
+                            </div>
+                            <div className="mt-6">
+                              <Link
+                                className="px-1 border-2 rounded-md hover:bg-green-600 mr-2"
+                                href={`${file.url}`}
+                              >
+                                Open
+                              </Link>
+                              <button
+                                className="px-1 border-2 rounded-md hover:bg-rose-600"
+                                onClick={() => deleteURLHandler(file.id)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </Slider>
+                    </div>
+                  ) : null}
+                </>
+              </li>
+            </div>
+          ))}
+        </ul>
+      </section>
     </section>
   );
 }
