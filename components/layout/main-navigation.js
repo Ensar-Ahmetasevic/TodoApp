@@ -37,7 +37,7 @@ function MainNavigation() {
                   href="/lists"
                   className="text-gray-300 hover:text-white transition duration-300 ease-in-out"
                 >
-                  ToDo's
+                  Add ToDo's
                 </Link>
               </li>
             )}

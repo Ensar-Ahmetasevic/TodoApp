@@ -45,9 +45,11 @@ function AllLists() {
   if (isError) return <ErrorNotification error={error} />;
 
   return (
+    //     {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
+
     <section>
       <ul>
-        {_.sortBy(data.allLists).map((list) => (
+        {_.sortBy(data.allLists, ["checkBox"]).map((list) => (
           <div className="my-3 p-3 rounded-lg border-4 border-solid border-green-600 hover:border-green-400">
             <li className="my-3" key={list.id} style={{ listStyle: "none" }}>
               <input
