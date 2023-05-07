@@ -185,10 +185,10 @@ function TodoForm() {
                     {item.text}
                   </label>
                 </div>
-                <div className=" flex-row flex-initial w-1/3 py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg  ">
+                <div className=" flex-row flex-initial w-1/3 py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg ">
                   {item.checkBox ? (
                     <button
-                      className="ml-2 px-2 border-2 rounded-md  hover:bg-rose-600"
+                      className=" my-2 px-2 border-2 rounded-md  hover:bg-rose-600"
                       onClick={() => deleteItemHandler(item.id)}
                     >
                       {deleteTodoMutation.isLoading &&

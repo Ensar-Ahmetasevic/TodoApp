@@ -3,7 +3,7 @@ import { getSession } from "next-auth/client";
 
 function TodoListsHP() {
   return (
-    <section className="flex justify-center pt-8 ">
+    <section className="  pt-8 ">
       <TodoList />
     </section>
   );

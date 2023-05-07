@@ -37,7 +37,7 @@ function MainNavigation() {
                   href="/lists"
                   className="text-gray-300 hover:text-white transition duration-300 ease-in-out"
                 >
-                  Your ToDo's
+                  ToDo's
                 </Link>
               </li>
             )}
@@ -46,9 +46,9 @@ function MainNavigation() {
               <li>
                 <Link
                   href="/profile"
-                  className="text-gray-300 hover:text-white transition duration-300 ease-in-out mx-8"
+                  className="text-gray-300 hover:text-white transition duration-300 ease-in-out mx-2"
                 >
-                  User Profile
+                  Profile
                 </Link>
               </li>
             )}

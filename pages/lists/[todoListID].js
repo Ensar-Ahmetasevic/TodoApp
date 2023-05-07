@@ -6,9 +6,7 @@ function HomePage() {
   return (
     <Fragment>
       <section className="  pt-8 ">
-        <div className="center">
-          <TodoForm />
-        </div>
+        <TodoForm />
       </section>
     </Fragment>
   );
