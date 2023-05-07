@@ -17,7 +17,7 @@ function TodoList() {
   } = useForm();
 
   function newListHandler(data) {
-    //"data" from react-hook-form
+    //"data" from react-hook-form.
     const newList = data.newListInput;
 
     createListMutation.mutateAsync({ listName: newList });
