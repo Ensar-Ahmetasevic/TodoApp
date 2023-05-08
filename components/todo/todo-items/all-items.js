@@ -192,21 +192,24 @@ export default function AllItems() {
                       {!addFile && addFileItemID === item.id && (
                         <div className="ml-2 ">
                           <input
-                            className=" my-5"
+                            className=" my-5 sm:w-full  sm:mt-6 sm:my-3"
                             type="file"
                             name="file"
                             onChange={(e) => handleFilesChange(e)}
                           />
+
                           <br />
+
                           <button
-                            className="px-2 border-2 rounded-md hover:bg-sky-700"
+                            className="  px-2 border-2 rounded-md hover:bg-sky-700"
                             type="submit"
                             onClick={() => saveFilesChange(item.id)}
                           >
                             Save
                           </button>
+
                           <button
-                            className={`ml-2 px-2 border-2 rounded-md ${
+                            className={`ml-2 px-2 border-2 rounded-md sm:px-0 sm: mt-2 ${
                               !showFile
                                 ? "hover:bg-green-600"
                                 : "hover:bg-slate-500"
@@ -223,6 +226,7 @@ export default function AllItems() {
               </div>
 
               {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
+
               {editTodo && editTodo.id === item.id ? ( // if "editTodo" is null it will no be visible"
                 <form className="mt-5">
                   <input
