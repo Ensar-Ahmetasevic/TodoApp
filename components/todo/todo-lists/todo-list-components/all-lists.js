@@ -87,7 +87,7 @@ function AllLists() {
                   <>
                     <div>
                       <Link
-                        className="p-1.5 border-2 rounded-md  hover:bg-rose-600 md:ml-2"
+                        className="p-1.5 border-2 rounded-md  hover:bg-sky-700 md:ml-2"
                         href={`/lists/${list.id}`}
                       >
                         Open

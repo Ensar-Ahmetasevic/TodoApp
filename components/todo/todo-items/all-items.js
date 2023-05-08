@@ -188,18 +188,19 @@ export default function AllItems() {
                       {addFile ? "Add File" : "Cancel"}
                     </button>
 
-                    <div>
-                      {!addFile && addFileItemID === item.id && (
-                        <div className="ml-2 ">
+                    {!addFile && addFileItemID === item.id && (
+                      <div className="ml-2 sm:ml-0 ">
+                        <div className="sm:w-24">
                           <input
                             className=" my-5 sm:w-full  sm:mt-6 sm:my-3"
                             type="file"
                             name="file"
                             onChange={(e) => handleFilesChange(e)}
                           />
+                        </div>
 
-                          <br />
-
+                        <br />
+                        <div>
                           <button
                             className="  px-2 border-2 rounded-md hover:bg-sky-700"
                             type="submit"
@@ -207,7 +208,9 @@ export default function AllItems() {
                           >
                             Save
                           </button>
+                        </div>
 
+                        <div>
                           <button
                             className={`ml-2 px-2 border-2 rounded-md sm:px-0 sm: mt-2 ${
                               !showFile
@@ -219,8 +222,8 @@ export default function AllItems() {
                             {showFile ? "Hide My Files" : "Show My Files"}
                           </button>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -228,28 +231,44 @@ export default function AllItems() {
               {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
 
               {editTodo && editTodo.id === item.id ? ( // if "editTodo" is null it will no be visible"
-                <form className="mt-5">
-                  <input
-                    className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
-                    type="text"
-                    value={editTodo.text}
-                    onChange={(event) =>
-                      setEditTodo({ ...editTodo, text: event.target.value })
-                    }
-                  />
-                  <button
-                    className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
-                    onClick={() => updateTodoItem(editTodo.id, editTodo.text)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="ml-2 mr-1 px-1 border-2 rounded-md  hover:bg-slate-500"
-                    onClick={() => setEditTodo(null)}
-                  >
-                    Cancel
-                  </button>
-                </form>
+                <section className="grid grid-cols-6 gap-4">
+                  {" "}
+                  <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-6">
+                    {" "}
+                    <form className="mt-5 max-w-md mx-auto">
+                      <div className="flex">
+                        <input
+                          className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
+                          type="text"
+                          value={editTodo.text}
+                          onChange={(event) =>
+                            setEditTodo({
+                              ...editTodo,
+                              text: event.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className="mt-5">
+                        <button
+                          className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+                          onClick={() =>
+                            updateTodoItem(editTodo.id, editTodo.text)
+                          }
+                        >
+                          Update
+                        </button>
+                        <button
+                          className="ml-2 mr-1 px-1 border-2 rounded-md  hover:bg-slate-500"
+                          onClick={() => setEditTodo(null)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </section>
               ) : null}
               <>
                 {showFile &&
