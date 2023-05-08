@@ -30,7 +30,7 @@ function TodoList() {
 
   return (
     <section className="grid grid-cols-6 gap-4">
-      <div className="col-start-2 col-span-4">
+      <div className="col-start-2 col-span-4 ">
         <h1 className="text-xl font-bold">Create your new ToDo List</h1>
         <form
           className="max-w-md mx-auto"

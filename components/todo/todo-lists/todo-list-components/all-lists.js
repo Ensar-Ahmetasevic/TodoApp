@@ -70,7 +70,7 @@ function AllLists() {
                 {list.name}
               </label>
 
-              <div className="  flex-row flex-initial w-1/3 py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg ">
+              <div className="  flex-row flex-initial w-1/3 py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0">
                 {list.checkBox ? (
                   <button
                     className="px-2 border-2 rounded-md  hover:bg-rose-600"
@@ -87,14 +87,14 @@ function AllLists() {
                   <>
                     <div>
                       <Link
-                        className="p-1.5 border-2 rounded-md  hover:bg-rose-600"
+                        className="p-1.5 border-2 rounded-md  hover:bg-rose-600 md:ml-2"
                         href={`/lists/${list.id}`}
                       >
                         Open
                       </Link>
 
                       <button
-                        className=" mt-4 mb-3 mx-3 px-1 border-2 rounded-md  hover:bg-amber-400"
+                        className=" mt-4 mb-3 mx-3 px-1 border-2 rounded-md  hover:bg-amber-400 sm:mx-0"
                         onClick={() => updateListHandler(list)}
                       >
                         {updateListMutation.isLoading &&
@@ -120,30 +120,46 @@ function AllLists() {
                   </>
                 )}
               </div>
+
               {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
+
               {editList && editList.id === list.id ? ( // if "editList" is null it will no be visible"
-                <form className="mt-5">
-                  <input
-                    className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
-                    type="text"
-                    value={editList.name}
-                    onChange={(event) =>
-                      setEditList({ ...editList, name: event.target.value })
-                    }
-                  />
-                  <button
-                    className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
-                    onClick={() => updateListItem(editList.id, editList.name)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="ml-2 mr-1 px-1 border-2 rounded-md  hover:bg-slate-500"
-                    onClick={() => setEditList(null)}
-                  >
-                    Cancel
-                  </button>
-                </form>
+                <section className="grid grid-cols-6 gap-4">
+                  <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-6">
+                    <form className="mt-5  max-w-md mx-auto">
+                      <div className="flex">
+                        <input
+                          className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
+                          type="text"
+                          value={editList.name}
+                          onChange={(event) =>
+                            setEditList({
+                              ...editList,
+                              name: event.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className="mt-5">
+                        <button
+                          className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+                          onClick={() =>
+                            updateListItem(editList.id, editList.name)
+                          }
+                        >
+                          Update
+                        </button>
+                        <button
+                          className="ml-2 mr-1 px-1 border-2 rounded-md  hover:bg-slate-500"
+                          onClick={() => setEditList(null)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </section>
               ) : null}
             </li>
           </div>
