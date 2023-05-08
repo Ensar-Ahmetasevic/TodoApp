@@ -141,7 +141,7 @@ export default function AllItems() {
                 </label>
               </div>
 
-              <div className="  flex-row flex-initial w-1/3 py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0">
+              <div className="flex-row flex-initial w-1/3 py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0">
                 {item.checkBox ? (
                   <button
                     className=" my-2 px-2 border-2 rounded-md  hover:bg-rose-600"
@@ -190,7 +190,7 @@ export default function AllItems() {
 
                     {!addFile && addFileItemID === item.id && (
                       <div className="ml-2 sm:ml-0 ">
-                        <div className="sm:w-24">
+                        <div className="sm:w-52">
                           <input
                             className=" my-5 sm:w-full  sm:mt-6 sm:my-3"
                             type="file"
