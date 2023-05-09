@@ -120,7 +120,13 @@ export default function AllItems() {
       <ul>
         {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
           // first sort "items" wher "checkBox" value is "true" and then whit value "false"
-          <div className="my-3 p-3 rounded-lg border-4 border-solid border-green-600 hover:border-green-400">
+          <div
+            className={`my-3 p-3 rounded-lg border-4 border-solid  ${
+              item.checkBox === false
+                ? " border-green-600 hover:border-green-400"
+                : " border-red-600 hover:border-red-400"
+            } `}
+          >
             <li key={item.id} style={{ listStyle: "none" }}>
               <div className="mb-3">
                 <input
