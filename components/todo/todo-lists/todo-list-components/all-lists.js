@@ -65,7 +65,7 @@ function AllLists() {
               <label
                 className={`mx-1 text-xl ${list.checkBox ? "checked" : ""}`}
                 htmlFor={list.checkBox.toString()}
-                // If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
+                //If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
               >
                 {list.name}
               </label>
