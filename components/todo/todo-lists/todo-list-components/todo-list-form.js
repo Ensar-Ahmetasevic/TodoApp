@@ -38,7 +38,7 @@ function TodoList() {
         >
           <div className="mt-2 mb-6 flex">
             <input
-              className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
+              className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full sm:text-sm"
               type="text"
               placeholder="Enter your new todo list"
               maxLength={500}

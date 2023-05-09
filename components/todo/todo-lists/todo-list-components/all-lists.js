@@ -1,6 +1,6 @@
 import { useState } from "react";
 import _ from "lodash";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { ListMutations } from "../list-react-query/list-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
@@ -11,6 +11,8 @@ function AllLists() {
   const [editList, setEditList] = useState(null);
   const [deletingListId, setDeletingListId] = useState(null);
   const [updateListId, setUpdateListId] = useState(null);
+
+  const router = useRouter();
 
   const {
     isLoading,
@@ -45,8 +47,6 @@ function AllLists() {
   if (isError) return <ErrorNotification error={error} />;
 
   return (
-    //     {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
-
     <section>
       <ul>
         {_.sortBy(data.allLists, ["checkBox"]).map((list) => (
@@ -86,16 +86,12 @@ function AllLists() {
                 ) : (
                   <>
                     <div>
-                      <Link
-                        className="p-1.5 border-2 rounded-md  hover:bg-sky-700 md:ml-2"
-                        href={`/lists/${list.id}`}
+                      <button
+                        className="p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2"
+                        onClick={() => router.push(`/lists/${list.id}`)}
                       >
-                        {ListMutations.isLoading ? (
-                          <LoadingSpinnerButton />
-                        ) : (
-                          "Open"
-                        )}
-                      </Link>
+                        {isLoading ? <LoadingSpinnerButton /> : "Open"}
+                      </button>
 
                       <button
                         className=" mt-4 mb-3 mx-3 px-1 border-2 rounded-md  hover:bg-amber-400 sm:mx-0"
@@ -147,7 +143,7 @@ function AllLists() {
 
                       <div className="mt-5">
                         <button
-                          className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+                          className=" mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
                           onClick={() =>
                             updateListItem(editList.id, editList.name)
                           }
@@ -155,7 +151,7 @@ function AllLists() {
                           Update
                         </button>
                         <button
-                          className="ml-2 mr-1 px-1 border-2 rounded-md  hover:bg-slate-500"
+                          className="ml-1 px-1 border-2 rounded-md  hover:bg-slate-500"
                           onClick={() => setEditList(null)}
                         >
                           Cancel

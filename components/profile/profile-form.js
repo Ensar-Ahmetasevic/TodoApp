@@ -40,7 +40,10 @@ function ProfileForm({ onChangePassword }) {
   }
 
   return (
-    <form className="max-w-md mx-auto" onSubmit={handleSubmit(submitHandler)}>
+    <form
+      className="max-w-md mx-auto px-4 "
+      onSubmit={handleSubmit(submitHandler)}
+    >
       <div className="mb-4 relative">
         <label htmlFor="new-password" className="block font-semibold mb-1">
           New Password

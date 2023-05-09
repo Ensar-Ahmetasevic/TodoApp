@@ -2,7 +2,7 @@ import { useState } from "react";
 import _ from "lodash";
 import { useS3Upload } from "next-s3-upload";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { TodoMutations } from "./todo-react-query/todo-mutations";
 
@@ -27,6 +27,8 @@ export default function AllItems() {
 
   const [slideIndex, setSlideIndex] = useState(0);
 
+  const router = useRouter();
+
   const [imageUrl, setImageUrl] = useState();
   const { uploadToS3 } = useS3Upload();
 
@@ -40,7 +42,6 @@ export default function AllItems() {
   };
 
   const { data: URLdata } = AwsUrlQuery(addFileItemID);
-
   const { createURLMutation, deleteURLMutation } = URLMutations();
 
   const {
@@ -206,7 +207,11 @@ export default function AllItems() {
                             type="submit"
                             onClick={() => saveFilesChange(item.id)}
                           >
-                            Save
+                            {createURLMutation.isLoading ? (
+                              <LoadingSpinnerButton />
+                            ) : (
+                              "Save"
+                            )}
                           </button>
                         </div>
 
@@ -231,12 +236,12 @@ export default function AllItems() {
               {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
 
               {editTodo && editTodo.id === item.id ? ( // if "editTodo" is null it will no be visible"
-                <section className="grid grid-cols-6 gap-4">
+                <section className="grid grid-cols-4 gap-2 items-center">
                   {" "}
-                  <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-6">
+                  <div className="col-start-2 col-span-2 sm:col-start-1 sm:col-span-6">
                     {" "}
-                    <form className="mt-5 max-w-md mx-auto">
-                      <div className="flex">
+                    <form className=" mt-5 max-w-md mx-auto">
+                      <div className="sm:flex">
                         <input
                           className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
                           type="text"
@@ -250,9 +255,9 @@ export default function AllItems() {
                         />
                       </div>
 
-                      <div className="mt-5">
+                      <div className=" flex justify-center mt-5">
                         <button
-                          className="ml-5 mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+                          className=" mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
                           onClick={() =>
                             updateTodoItem(editTodo.id, editTodo.text)
                           }
@@ -260,7 +265,7 @@ export default function AllItems() {
                           Update
                         </button>
                         <button
-                          className="ml-2 mr-1 px-1 border-2 rounded-md  hover:bg-slate-500"
+                          className="ml-2 px-1 border-2 rounded-md  hover:bg-slate-500"
                           onClick={() => setEditTodo(null)}
                         >
                           Cancel
@@ -299,17 +304,23 @@ export default function AllItems() {
                             />
                           </div>
                           <div className="mt-6">
-                            <Link
+                            <button
                               className="px-1 border-2 rounded-md hover:bg-green-600 mr-2"
-                              href={`${file.url}`}
+                              //href={`${file.url}`}
+                              onClick={() => router.push(`${file.url}`)}
                             >
                               Open
-                            </Link>
+                            </button>
+
                             <button
                               className="px-1 border-2 rounded-md hover:bg-rose-600"
                               onClick={() => deleteURLHandler(file.id)}
                             >
-                              Delete
+                              {deleteURLMutation.isLoading ? (
+                                <LoadingSpinnerButton />
+                              ) : (
+                                "Delete"
+                              )}
                             </button>
                           </div>
                         </div>

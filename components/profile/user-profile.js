@@ -34,7 +34,7 @@ function UserProfile() {
 
   return (
     <section>
-      <h1 className="text-3xl text-center font-bold mb-8">
+      <h1 className="text-3xl text-center font-bold mb-8 sm:text-2xl">
         Change Your Password
       </h1>
 
