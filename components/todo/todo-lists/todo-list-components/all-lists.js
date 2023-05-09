@@ -87,14 +87,14 @@ function AllLists() {
                   <>
                     <div>
                       <button
-                        className="p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2"
+                        className="p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2 sm:px-1 sm:p-0"
                         onClick={() => router.push(`/lists/${list.id}`)}
                       >
                         {isLoading ? <LoadingSpinnerButton /> : "Open"}
                       </button>
 
                       <button
-                        className=" mt-4 mb-3 mx-3 px-1 border-2 rounded-md  hover:bg-amber-400 sm:mx-0"
+                        className=" mt-3 mb-3 mx-3 px-1 border-2 rounded-md  hover:bg-amber-400 sm:mx-0"
                         onClick={() => updateListHandler(list)}
                       >
                         {updateListMutation.isLoading &&
