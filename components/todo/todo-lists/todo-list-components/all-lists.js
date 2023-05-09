@@ -50,7 +50,13 @@ function AllLists() {
     <section>
       <ul>
         {_.sortBy(data.allLists, ["checkBox"]).map((list) => (
-          <div className="my-3 p-3 rounded-lg border-4 border-solid border-green-600 hover:border-green-400">
+          <div
+            className={`my-3 p-3 rounded-lg border-4 border-solid  ${
+              list.checkBox === false
+                ? " border-green-600 hover:border-green-400"
+                : " border-red-600 hover:border-red-400"
+            } `}
+          >
             <li className="my-3" key={list.id} style={{ listStyle: "none" }}>
               <input
                 className="mr-1 mb-2"
