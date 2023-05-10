@@ -1,5 +1,5 @@
 import { useState } from "react";
-import _ from "lodash";
+import _, { divide } from "lodash";
 import { useRouter } from "next/router";
 
 import { ListMutations } from "../list-react-query/list-mutations";
@@ -36,6 +36,7 @@ function AllLists() {
 
   function toggleCheckBoxHandler(id, checkBox) {
     toggleCheckBoxMutation.mutateAsync({ id, checkBox: !checkBox });
+    setEditList(null);
   }
 
   function deleteListHandler(id) {
@@ -73,7 +74,14 @@ function AllLists() {
                 htmlFor={list.checkBox.toString()}
                 //If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
               >
-                {list.name}
+                {toggleCheckBoxMutation.isLoading ? (
+                  <>
+                    <LoadingSpinner />
+                    {list.name}
+                  </>
+                ) : (
+                  list.name
+                )}
               </label>
 
               <div className="  flex-row flex-initial w-1/3 py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0">
