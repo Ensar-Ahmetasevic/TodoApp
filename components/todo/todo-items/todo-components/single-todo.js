@@ -7,14 +7,15 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import AwsUrlQuery from "../todo-aws-url/url-react-query";
-import { URLMutations } from "../todo-aws-url/url-mutations";
+import { TodoMutations } from "../todo-react-query/todo-mutations";
+import AwsUrlQuery from "../../todo-aws-url/url-react-query";
+import { URLMutations } from "../../todo-aws-url/url-mutations";
 import ErrorNotification from "@/helpers/error";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import { TodoMutations } from "./todo-react-query/todo-mutations";
 
 export default function SingleItem({ item }) {
+  //
   const [editTodo, setEditTodo] = useState(null);
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [updateItemId, setUpdateItemId] = useState(null);
@@ -56,6 +57,7 @@ export default function SingleItem({ item }) {
   function updateItemHandler(item) {
     setEditTodo(item);
   }
+
   function updateTodoItem(id, text) {
     setUpdateItemId(id);
     updateTodoMutation.mutateAsync({ id, text });
@@ -121,18 +123,18 @@ export default function SingleItem({ item }) {
 
   return (
     <div
-      className={`my-3 p-3 rounded-lg border-4 border-solid hover:pulse hover:bg-gray-800 ${
+      className={`mt-3 mb-3 sm:p-0 rounded-lg border-4 border-solid hover:pulse hover:bg-gray-800 ${
         item.checkBox === false
           ? " border-green-600 hover:border-green-400"
           : " border-red-600 hover:border-red-400"
       } `}
     >
-      <li key={item.id} style={{ listStyle: "none" }}>
-        <div className="grid grid-cols-8 gap-2">
+      <li className="my-3" key={item.id} style={{ listStyle: "none" }}>
+        <div className="grid grid-cols-3 gap-4">
           {""}
-          <div className="col-start-1 col-end-6  mx-5 ">
+          <div className="col-span-2 mx-5 sm:col-span-3 sm:ml-3 sm:mr-3">
             <input
-              className="mr-1 mb-2 h-4 w-4 cursor-pointer accent-red-500"
+              className="mr-1 mb-2 h-4 w-4 sm:h-3 sm:w-3 cursor-pointer accent-red-500"
               type="checkbox"
               id={item.id}
               name={item.id}
@@ -142,7 +144,9 @@ export default function SingleItem({ item }) {
               }}
             />
             <label
-              className={`mx-1 text-xl ${item.checkBox ? "checked" : ""}`}
+              className={`mx-1 text-xl ${
+                item.checkBox ? "checked" : ""
+              } sm:text-lg  `}
               htmlFor={item.checkBox.toString()}
               // If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
             >
@@ -157,11 +161,11 @@ export default function SingleItem({ item }) {
             </label>
           </div>
 
-          <div className="col-end-9 col-span-3 ">
-            <div className="py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0">
+          <div className="col-span-1  sm:col-span-3">
+            <div className="py-2 mr-3 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0 sm:mr-2 sm:ml-0 sm:mt-0">
               {item.checkBox ? (
                 <button
-                  className=" my-2 px-2 border-2 rounded-md  hover:bg-rose-600"
+                  className=" my-2 px-2 border-2 rounded-md  hover:bg-rose-600 "
                   onClick={() => deleteItemHandler(item.id)}
                 >
                   {deleteTodoMutation.isLoading &&
@@ -185,7 +189,7 @@ export default function SingleItem({ item }) {
                     )}
                   </button>
                   <button
-                    className="mx-2 px-2 my-2 border-2 rounded-md  hover:bg-rose-600 sm:mx-0 "
+                    className="mx-2 px-2 my-2 border-2 rounded-md  hover:bg-rose-600"
                     onClick={() => deleteItemHandler(item.id)}
                   >
                     {deleteTodoMutation.isLoading &&
@@ -209,7 +213,7 @@ export default function SingleItem({ item }) {
                     <div className="ml-2 sm:ml-0 ">
                       <div className="sm:w-52">
                         <input
-                          className=" my-5 sm:w-full  sm:mt-6 sm:my-3"
+                          className=" my-5 sm:w-full sm:ml-2 sm:mt-6 sm:my-3"
                           type="file"
                           name="file"
                           onChange={(e) => handleFilesChange(e)}
@@ -233,7 +237,7 @@ export default function SingleItem({ item }) {
 
                       <div>
                         <button
-                          className={`ml-2 px-2 border-2 rounded-md sm:px-0 sm: mt-2 ${
+                          className={`ml-2 px-2 border-2 rounded-md sm:px-1 sm: mt-2 ${
                             !showFile
                               ? "hover:bg-green-600"
                               : "hover:bg-slate-500"
@@ -280,7 +284,6 @@ export default function SingleItem({ item }) {
                             <div className="mt-6">
                               <button
                                 className="px-1 border-2 rounded-md hover:bg-green-600 mr-2"
-                                //href={`${file.url}`}
                                 onClick={() => router.push(`${file.url}`)}
                               >
                                 Open
@@ -307,47 +310,48 @@ export default function SingleItem({ item }) {
             </div>
           </div>
         </div>
-
-        {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
-
-        {editTodo && editTodo.id === item.id ? ( // if "editTodo" is null it will no be visible"
-          <section className="grid grid-cols-4 gap-2 items-center">
-            {" "}
-            <div className="col-start-2 col-span-2 sm:col-start-1 sm:col-span-6">
+        <div>
+          {/*  */}
+          {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
+          {editTodo && editTodo.id === item.id ? ( // if "editTodo" is null it will no be visible"
+            <section className="grid grid-cols-4 gap-2 items-center">
               {" "}
-              <form className=" mt-5 max-w-md mx-auto">
-                <div className="sm:flex">
-                  <input
-                    className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
-                    type="text"
-                    value={editTodo.text}
-                    onChange={(event) =>
-                      setEditTodo({
-                        ...editTodo,
-                        text: event.target.value,
-                      })
-                    }
-                  />
-                </div>
+              <div className="col-start-2 col-span-2 sm:col-start-1 sm:col-span-6 sm:mx-4 sm:text-sm">
+                {" "}
+                <form className=" mt-5 max-w-md mx-auto">
+                  <div className="sm:flex">
+                    <input
+                      className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
+                      type="text"
+                      value={editTodo.text}
+                      onChange={(event) =>
+                        setEditTodo({
+                          ...editTodo,
+                          text: event.target.value,
+                        })
+                      }
+                    />
+                  </div>
 
-                <div className=" flex justify-center mt-5">
-                  <button
-                    className=" mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
-                    onClick={() => updateTodoItem(editTodo.id, editTodo.text)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="ml-2 px-1 border-2 rounded-md  hover:bg-slate-500"
-                    onClick={() => setEditTodo(null)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          </section>
-        ) : null}
+                  <div className=" flex justify-center mt-5">
+                    <button
+                      className=" mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+                      onClick={() => updateTodoItem(editTodo.id, editTodo.text)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      className="ml-2 px-1 border-2 rounded-md  hover:bg-slate-500"
+                      onClick={() => setEditTodo(null)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </section>
+          ) : null}
+        </div>
       </li>
     </div>
   );

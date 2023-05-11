@@ -29,16 +29,17 @@ function TodoList() {
   if (isError) return <ErrorNotification error={error} />;
 
   return (
-    <section className="grid grid-cols-6 gap-4 mx-20">
-      <div className="col-start-2 col-span-4 ">
-        <h1 className="text-xl font-bold">Create your new ToDo List</h1>
+    <section className="grid grid-cols-6 gap-4 mx-20 sm:mx-5">
+      <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-7">
+        <h1 className="text-xl font-bold mb-5">Create your new ToDo List</h1>
+
         <form
           className="max-w-md mx-auto"
           onSubmit={handleSubmit(newListHandler)}
         >
           <div className="mt-2 mb-6 flex">
             <input
-              className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full sm:text-sm"
+              className="border border-gray-300 font-bold text-slate-800 rounded-md px-3 w-full sm:text-sm"
               type="text"
               placeholder="Enter your new todo list"
               maxLength={500}
@@ -61,7 +62,8 @@ function TodoList() {
           </div>
         </form>
       </div>
-      <div className="col-start-2 col-span-4">
+
+      <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-7">
         <AllLists />
       </div>
     </section>

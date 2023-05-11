@@ -3,7 +3,6 @@ import TodoItemsQuery from "./todo-query";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import ListQuery from "../../todo-lists/list-react-query/list-query";
 
 export function TodoMutations() {
   const queryClient = useQueryClient();

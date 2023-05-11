@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 
-import { TodoMutations } from "./todo-react-query/todo-mutations";
+import { TodoMutations } from "../todo-react-query/todo-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import ErrorNotification from "@/helpers/error";
@@ -29,16 +29,16 @@ function TodoForm() {
   if (isError) return <ErrorNotification error={error} />;
 
   return (
-    <section className=" grid grid-cols-6 gap-4 mx-20">
-      <div className=" col-start-2 col-span-4">
-        <h2 className=" text-xl font-bold">Please enter your ToDo`s</h2>
+    <section className=" grid grid-cols-6 gap-4 mx-20 sm:mx-5">
+      <div className=" col-start-2 col-span-4 sm:col-start-1 sm:col-span-7">
+        <h2 className=" text-xl font-bold mb-5">Please enter your ToDo`s</h2>
         <form
           className="max-w-md mx-auto"
           onSubmit={handleSubmit(sendTextItemHandler)}
         >
           <div className=" mt-2 mb-6 flex">
             <input
-              className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full sm:text-sm"
+              className="border border-gray-300 font-bold text-slate-800 rounded-md px-3 w-full sm:text-sm"
               type="text"
               placeholder="Enter a new todo item"
               maxLength={1000}
@@ -57,7 +57,7 @@ function TodoForm() {
           </div>
         </form>
       </div>
-      <section className=" col-start-2 col-span-4 ">
+      <section className=" col-start-2 col-span-4 sm:col-start-1 sm:col-span-7">
         <AllItems />
       </section>
     </section>
