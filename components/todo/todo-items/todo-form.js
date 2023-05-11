@@ -29,7 +29,7 @@ function TodoForm() {
   if (isError) return <ErrorNotification error={error} />;
 
   return (
-    <section className=" grid grid-cols-6 gap-4 ">
+    <section className=" grid grid-cols-6 gap-4 mx-20">
       <div className=" col-start-2 col-span-4">
         <h2 className=" text-xl font-bold">Please enter your ToDo`s</h2>
         <form

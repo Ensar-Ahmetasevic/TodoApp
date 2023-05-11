@@ -1,6 +1,7 @@
 import { useState } from "react";
-import _, { divide } from "lodash";
+import _ from "lodash";
 import { useRouter } from "next/router";
+import moment from "moment";
 
 import { ListMutations } from "../list-react-query/list-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
@@ -52,91 +53,109 @@ function AllLists() {
       <ul>
         {_.sortBy(data.allLists, ["checkBox"]).map((list) => (
           <div
-            className={`my-3 p-3 rounded-lg border-4 border-solid  ${
+            className={`col-start-2 col-span-4 rounded-lg mt-3 mb-3  border-4 border-solid hover:bg-gray-800  ${
               list.checkBox === false
                 ? " border-green-600 hover:border-green-400"
                 : " border-red-600 hover:border-red-400"
             } `}
           >
             <li className="my-3" key={list.id} style={{ listStyle: "none" }}>
-              <input
-                className="mr-1 mb-2"
-                type="checkbox"
-                id={list.id}
-                name={list.id}
-                checked={list.checkBox} // enables the checkbox to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
-                onChange={() => {
-                  toggleCheckBoxHandler(list.id, list.checkBox);
-                }}
-              />
-              <label
-                className={`mx-1 text-xl ${list.checkBox ? "checked" : ""}`}
-                htmlFor={list.checkBox.toString()}
-                //If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
-              >
-                {toggleCheckBoxMutation.isLoading ? (
-                  <>
-                    <LoadingSpinner />
-                    {list.name}
-                  </>
-                ) : (
-                  list.name
-                )}
-              </label>
-
-              <div className="  flex-row flex-initial w-1/3 py-2 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0">
-                {list.checkBox ? (
-                  <button
-                    className="px-2 border-2 rounded-md  hover:bg-rose-600"
-                    onClick={() => deleteListHandler(list.id)}
+              <div className="grid grid-cols-8 gap-2">
+                <div className="col-start-1 col-end-6  mx-5">
+                  <input
+                    className="mr-3 mb-2 cursor-pointer accent-red-500"
+                    type="checkbox"
+                    id={list.id}
+                    name={list.id}
+                    checked={list.checkBox} // enables the checkbox to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
+                    onChange={() => {
+                      toggleCheckBoxHandler(list.id, list.checkBox);
+                    }}
+                  />
+                  <label
+                    className={`mx-1 text-xl ${list.checkBox ? "checked" : ""}`}
+                    htmlFor={list.checkBox.toString()}
+                    //If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
                   >
-                    {deleteListMutation.isLoading &&
-                    deletingListId === list.id ? (
-                      <LoadingSpinnerButton />
+                    {toggleCheckBoxMutation.isLoading ? (
+                      <>
+                        <LoadingSpinner />
+                        {list.name}
+                      </>
                     ) : (
-                      "Delete"
+                      list.name
                     )}
-                  </button>
-                ) : (
-                  <>
-                    <div>
-                      <button
-                        className="p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2 sm:px-1 sm:p-0"
-                        onClick={() => router.push(`/lists/${list.id}`)}
-                      >
-                        {isLoading ? <LoadingSpinnerButton /> : "Open"}
-                      </button>
+                  </label>
+                </div>
 
-                      <button
-                        className=" mt-3 mb-3 mx-3 px-1 border-2 rounded-md  hover:bg-amber-400 sm:mx-0"
-                        onClick={() => updateListHandler(list)}
-                      >
-                        {updateListMutation.isLoading &&
-                        updateListId === list.id ? (
-                          <LoadingSpinnerButton />
-                        ) : (
-                          "Update"
-                        )}
-                      </button>
+                <div className="col-end-9 col-span-2">
+                  <p className="text-left">
+                    <b>Created:</b>{" "}
+                    {moment(list.createdAt).format("DD/MM/YYYY")}
+                  </p>
+                  {moment(list.createdAt).isSame(list.updatedAt, "day") ? (
+                    ""
+                  ) : (
+                    <p className="text-left mt-1 ">
+                      <b>Last update:</b>{" "}
+                      {moment(list.updatedAt).format("DD/MM/YYYY")}
+                    </p>
+                  )}
+                </div>
 
-                      <button
-                        className=" px-2 border-2 rounded-md  hover:bg-rose-600"
-                        onClick={() => deleteListHandler(list.id)}
-                      >
-                        {deleteListMutation.isLoading &&
-                        deletingListId == list.id ? (
-                          <LoadingSpinnerButton />
-                        ) : (
-                          "Delete"
-                        )}
-                      </button>
-                    </div>
-                  </>
-                )}
+                <div className=" col-end-9 col-span-3  py-1 mx-2 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0">
+                  {list.checkBox ? (
+                    <button
+                      className="px-2 border-2 rounded-md  hover:bg-rose-600"
+                      onClick={() => deleteListHandler(list.id)}
+                    >
+                      {deleteListMutation.isLoading &&
+                      deletingListId === list.id ? (
+                        <LoadingSpinnerButton />
+                      ) : (
+                        "Delete"
+                      )}
+                    </button>
+                  ) : (
+                    <>
+                      <div>
+                        <button
+                          className="p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2 sm:px-1 sm:p-0"
+                          onClick={() => router.push(`/lists/${list.id}`)}
+                        >
+                          {isLoading ? <LoadingSpinnerButton /> : "Open"}
+                        </button>
+
+                        <button
+                          className=" mt-3 mb-3 mx-3 px-1 border-2 rounded-md  hover:bg-amber-400 sm:mx-0"
+                          onClick={() => updateListHandler(list)}
+                        >
+                          {updateListMutation.isLoading &&
+                          updateListId === list.id ? (
+                            <LoadingSpinnerButton />
+                          ) : (
+                            "Update"
+                          )}
+                        </button>
+
+                        <button
+                          className=" px-2 border-2 rounded-md  hover:bg-rose-600"
+                          onClick={() => deleteListHandler(list.id)}
+                        >
+                          {deleteListMutation.isLoading &&
+                          deletingListId == list.id ? (
+                            <LoadingSpinnerButton />
+                          ) : (
+                            "Delete"
+                          )}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
               {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
-
               {editList && editList.id === list.id ? ( // if "editList" is null it will no be visible"
                 <section className="grid grid-cols-6 gap-4">
                   <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-6">

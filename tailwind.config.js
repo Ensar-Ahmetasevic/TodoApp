@@ -6,7 +6,9 @@ module.exports = {
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {},
+    },
     screens: {
       sm: { max: "640px" },
       // => @media (max-width: 640px) { ... }

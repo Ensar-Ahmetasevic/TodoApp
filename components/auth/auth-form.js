@@ -29,7 +29,6 @@ function AuthForm() {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm();
 

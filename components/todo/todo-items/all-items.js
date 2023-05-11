@@ -8,10 +8,14 @@ export default function AllItems() {
 
   return (
     <section>
+      {/* <div>
+        <p>`Your List: ${dataLists.name} `</p>
+      </div> */}
       <ul>
         {_.sortBy(data.allItems, ["checkBox"]).map((item) => (
           // first sort "items" wher "checkBox" value is "true" and then whit value "false"
-          <SingleItem item={item} />
+
+          <SingleItem key={item.id} item={item} />
         ))}
       </ul>
     </section>

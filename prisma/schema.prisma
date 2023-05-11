@@ -18,6 +18,8 @@ model TodoList {
   id       Int      @id @default(autoincrement())
   name     String
   checkBox    Boolean  @default(false)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   userId   Int     // foreign key
   user     User     @relation(fields: [userId], references: [id])
   todos    Todo[]  

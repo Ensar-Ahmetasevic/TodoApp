@@ -12,12 +12,22 @@ function MainNavigation() {
   return (
     <header className="bg-gray-700 py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        <Link
-          href="/"
-          className="text-white font-bold text-xl tracking-tight hover:border-red-500 border-b-2 border-transparent transition duration-200 ease-in-out"
-        >
-          ToDo`s
-        </Link>
+        {!session && !loading ? (
+          <Link
+            href="/"
+            className="text-white font-bold text-xl tracking-tight hover:border-red-500 border-b-2 border-transparent transition duration-200 ease-in-out"
+          >
+            ToDo`s
+          </Link>
+        ) : (
+          <Link
+            href="/lists"
+            className="text-white font-bold text-xl tracking-tight hover:border-red-500 border-b-2 border-transparent transition duration-200 ease-in-out"
+          >
+            ToDo`s
+          </Link>
+        )}
+
         <nav>
           <ul className=" items-center flex space-x-4 sm:ml-2">
             {!session && !loading && (
