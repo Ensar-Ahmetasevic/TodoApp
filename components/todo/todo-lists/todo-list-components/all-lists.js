@@ -100,7 +100,7 @@ function AllLists() {
                     ""
                   ) : (
                     <p className="text-left mt-1 sm:text-right">
-                      <b>Last update:</b>{" "}
+                      <b>Last update:</b> <br />
                       {moment(list.updatedAt).format("DD/MM/YYYY")}
                     </p>
                   )}
