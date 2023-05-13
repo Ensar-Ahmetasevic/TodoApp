@@ -34,7 +34,7 @@ export default function SingleItem({ item }) {
   const settings = {
     dots: false,
     infinite: true,
-    speed: 500,
+    speed: 300,
     slidesToShow: 1,
     slidesToScroll: 1,
     beforeChange: (current, next) => setSlideIndex(next),
@@ -129,7 +129,7 @@ export default function SingleItem({ item }) {
           : " border-red-600 hover:border-red-400"
       } `}
     >
-      <li className="my-3" key={item.id} style={{ listStyle: "none" }}>
+      <li className="my-3" style={{ listStyle: "none" }}>
         <div className="grid grid-cols-3 gap-4">
           {""}
           <div className="col-span-2 mx-5 sm:col-span-3 sm:ml-3 sm:mr-3">
@@ -144,9 +144,9 @@ export default function SingleItem({ item }) {
               }}
             />
             <label
-              className={`mx-1 text-xl ${
+              className={`mx-1 text-xl sm:text-lg ${
                 item.checkBox ? "checked" : ""
-              } sm:text-lg  `}
+              }`}
               htmlFor={item.checkBox.toString()}
               // If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
             >
@@ -161,7 +161,7 @@ export default function SingleItem({ item }) {
             </label>
           </div>
 
-          <div className="col-span-1  sm:col-span-3">
+          <div className="col-span-1 sm:col-span-3">
             <div className="py-2 mr-3 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0 sm:mr-2 sm:ml-0 sm:mt-0">
               {item.checkBox ? (
                 <button
@@ -271,14 +271,14 @@ export default function SingleItem({ item }) {
                       />
                       <Slider {...settings}>
                         {URLdata.url.map((file) => (
-                          <div className="w-1/8 h-1/8 p-4" key={file.id}>
+                          <div className="w-1/4 h-1/4 p-4" key={file.id}>
                             <div className="w-full h-full flex justify-center items-center">
                               <Image
+                                className="rounded-md"
                                 src={file.url}
                                 alt={`${file.id}`}
                                 width={300}
                                 height={300}
-                                className="rounded-md"
                               />
                             </div>
                             <div className="mt-6">
