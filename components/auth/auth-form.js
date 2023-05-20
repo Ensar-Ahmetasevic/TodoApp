@@ -32,7 +32,7 @@ function AuthForm() {
     formState: { errors },
   } = useForm();
 
-  // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
+  // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value
   function switchAuthModeHandler() {
     setIsLogin((prevState) => !prevState);
   }
