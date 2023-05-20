@@ -10,11 +10,6 @@ import LoadingSpinner from "@/helpers/loading-spiner";
 import ErrorNotification from "@/helpers/error";
 
 function TodoListsHP() {
-  const { isLoading, isError, error } = TodoListQuery();
-
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) return <ErrorNotification error={error} />;
-
   return (
     <Layout>
       <Fragment>

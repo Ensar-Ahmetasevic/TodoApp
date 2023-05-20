@@ -1,9 +1,15 @@
 import { sortBy } from "lodash";
+
 import TodoSingleList from "./todo-list-components/todo-single-list";
 import TodoListQuery from "@/requests/requests-for-todo-lists/todo-list-query";
+import LoadingSpinner from "@/helpers/loading-spiner";
+import ErrorNotification from "@/helpers/error";
 
 function TodoAllLists() {
-  const { data: listsData } = TodoListQuery();
+  const { data: listsData, isLoading, isError, error } = TodoListQuery();
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) return <ErrorNotification error={error} />;
 
   return (
     <section className="grid grid-cols-6 gap-4 mx-20 sm:mx-5">
