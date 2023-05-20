@@ -46,9 +46,6 @@ function LoginForm() {
     setShowPassword(!showPassword);
   }
 
-  if (isSubmitting) return <LoadingSpinner />;
-  if (isSubmitting) return <ErrorNotification error={errors} />;
-
   return (
     <section className="max-w-md w-full mx-auto sm:mt-10">
       <h1 className="text-3xl text-center font-bold mb-8 sm:text-2xl">Login</h1>

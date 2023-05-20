@@ -7,8 +7,6 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import useDeleteTodoItemMutation from "@/requests/requests-for-todo-items/use-delete-todo-item-mutation";
-
 import TodoItemMutations from "../../../../requests/requests-for-todo-items/todo-items-mutations";
 import AwsUrlQuery from "../../../../requests/requests-for-aws-url/url-react-query";
 import AwsUrlMutations from "../../../../requests/requests-for-aws-url/url-mutations";
@@ -46,8 +44,6 @@ function SingleTodoItem({ item }) {
   const { updateTodoMutation, toggleisCompleteMutation, deleteTodoMutation } =
     TodoItemMutations();
 
-  const { mutateAsync: deleteTodoItemMutation } = useDeleteTodoItemMutation();
-
   // TODO ITEM MUTATIOS:
 
   function updateItemHandler(item) {
@@ -69,7 +65,7 @@ function SingleTodoItem({ item }) {
 
   function deleteItemHandler(id) {
     setDeletingItemId(id);
-    deleteTodoItemMutation(id);
+    deleteTodoMutation.mutateAsync(id);
     setAddFile(true);
     setShowFile(false);
   }
@@ -186,6 +182,7 @@ function SingleTodoItem({ item }) {
                       "Update"
                     )}
                   </button>
+
                   <button
                     className="mx-2 px-2 my-2 border-2 rounded-md  hover:bg-rose-600"
                     onClick={() => deleteItemHandler(item.id)}

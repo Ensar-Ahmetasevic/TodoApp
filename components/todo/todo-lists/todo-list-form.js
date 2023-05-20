@@ -2,13 +2,9 @@ import { useForm } from "react-hook-form";
 
 import TodoListMutations from "../../../requests/requests-for-todo-lists/todo-list-mutations";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import ErrorNotification from "@/helpers/error";
-import LoadingSpinner from "@/helpers/loading-spiner";
-import TodoListQuery from "@/requests/requests-for-todo-lists/todo-list-query";
 
 function TodoListForm() {
   const { createListMutation } = TodoListMutations();
-  const { isLoading, isError, error } = TodoListQuery();
 
   const {
     register,
@@ -24,9 +20,6 @@ function TodoListForm() {
     createListMutation.mutateAsync({ listName: newList });
 
     reset(); // Reset the form after submission
-
-    if (isLoading) return <LoadingSpinner />;
-    if (isError) return <ErrorNotification error={error} />;
   }
 
   return (

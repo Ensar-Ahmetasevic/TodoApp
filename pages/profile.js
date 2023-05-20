@@ -25,7 +25,7 @@ export async function getServerSideProps(context) {
   if (!session) {
     return {
       redirect: {
-        destination: "/auth",
+        destination: "/",
         permanent: false,
         // Adding "permanent" to indicate if that's a permanent redirect, which will always apply, or only a temporary one. And here we want to set
         // "permanent" to "false" to make it clear that it's only this time that we redirect because the user is not logged in.
