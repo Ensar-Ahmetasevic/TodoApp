@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import Link from "next/link";
+import LoadingSpinner from "@/helpers/loading-spiner";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -43,6 +44,8 @@ function LoginForm() {
   function toggleShowPassword() {
     setShowPassword(!showPassword);
   }
+
+  if (isSubmitting) return <LoadingSpinner />;
 
   return (
     <section className="max-w-md w-full mx-auto sm:mt-10">
