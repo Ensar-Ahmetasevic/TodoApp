@@ -6,15 +6,10 @@ import Link from "next/link";
 
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import { authMutations } from "@/requests/requests-for-auth/auth-mutations";
-import TodoListQuery from "@/requests/requests-for-todo-lists/todo-list-query";
-import LoadingSpinner from "@/helpers/loading-spiner";
-import ErrorNotification from "@/helpers/error";
 
 function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-
-  const { isLoading, isError, error } = TodoListQuery();
 
   const {
     register,
@@ -52,9 +47,6 @@ function SignupForm() {
   function toggleShowPassword() {
     setShowPassword(!showPassword);
   }
-
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) return <ErrorNotification error={error} />;
 
   return (
     <section className="max-w-md w-full mx-auto sm:mt-10">
