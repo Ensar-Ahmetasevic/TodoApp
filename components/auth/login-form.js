@@ -3,10 +3,11 @@ import { signIn } from "next-auth/client";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import Link from "next/link";
 import LoadingSpinner from "@/helpers/loading-spiner";
+import ErrorNotification from "@/helpers/error";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -46,6 +47,7 @@ function LoginForm() {
   }
 
   if (isSubmitting) return <LoadingSpinner />;
+  if (isSubmitting) return <ErrorNotification error={errors} />;
 
   return (
     <section className="max-w-md w-full mx-auto sm:mt-10">
