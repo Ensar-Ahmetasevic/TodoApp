@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from "react-query";
-import TodoItemsQuery from "./todo-query";
+
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
-export function TodoMutations() {
+function TodoItemMutations() {
   const queryClient = useQueryClient();
 
   const router = useRouter();
-  const listID = router.query.todoListID;
+  const listID = router.query.todoItems;
 
   // ** CREATE MUTATION **
   const createTodoMutation = useMutation(
@@ -55,9 +55,9 @@ export function TodoMutations() {
     }
   );
 
-  // ** CHECKBOX MUTATION **
+  // ** isComplete MUTATION **
 
-  const toggleCheckBoxMutation = useMutation(
+  const toggleisCompleteMutation = useMutation(
     async (updatedTodo) => {
       try {
         const response = await axios.patch(`/api/todos/${listID}`, updatedTodo);
@@ -72,7 +72,7 @@ export function TodoMutations() {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries("todoItems");
-        if (data.checkBox === true) {
+        if (data.isComplete === true) {
           toast.success("ToDo is successfully complete."), { autoClose: 700 };
         }
       },
@@ -103,18 +103,12 @@ export function TodoMutations() {
     }
   );
 
-  // I am sending those properties through "TodoMutations function" for "todo.js"
-  const { isLoading, isError, error, data } = TodoItemsQuery();
-
   return {
-    queryClient,
-    isLoading,
-    isError,
-    error,
-    data,
     createTodoMutation,
     updateTodoMutation,
-    toggleCheckBoxMutation,
+    toggleisCompleteMutation,
     deleteTodoMutation,
   };
 }
+
+export default TodoItemMutations;

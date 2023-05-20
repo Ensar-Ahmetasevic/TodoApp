@@ -2,14 +2,14 @@ import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export function URLMutations() {
+function AwsUrlMutations() {
   const queryClient = useQueryClient();
 
   // ** CREATE URL MUTATION **
   const createURLMutation = useMutation(
     async (URLData) => {
       try {
-        const response = await axios.post("/api/file", URLData);
+        const response = await axios.post("/api/awsAPI", URLData);
 
         return response.data; // Return the response data
       } catch (error) {
@@ -35,7 +35,7 @@ export function URLMutations() {
   const deleteURLMutation = useMutation(
     async (URLid) => {
       try {
-        const response = await axios.delete("/api/file", { data: { URLid } });
+        const response = await axios.delete("/api/awsAPI", { data: { URLid } });
         return response.data;
       } catch (error) {
         console.error("Failed to DELETE list:", error);
@@ -59,3 +59,5 @@ export function URLMutations() {
     deleteURLMutation,
   };
 }
+
+export default AwsUrlMutations;

@@ -5,7 +5,7 @@ async function handler(req, res) {
   //
   // Fidne all todo items from DB
   if (req.method === "GET") {
-    const listID = parseInt(req.query.todoID);
+    const listID = parseInt(req.query.listID);
     // String value ('1') was provided, that is why we need convert it to Integer value using "parseInt".
 
     try {
@@ -25,8 +25,8 @@ async function handler(req, res) {
 
   // Create new TODOs in DB
   if (req.method === "POST") {
-    const { text, checkBox } = req.body;
-    const listID = parseInt(req.query.todoID);
+    const { text, isComplete } = req.body;
+    const listID = parseInt(req.query.listID);
 
     if (!text) {
       res.status(422).json({ message: "Please enter your todo item." });
@@ -35,7 +35,7 @@ async function handler(req, res) {
 
     try {
       await prisma.todo.create({
-        data: { text, checkBox, todoList: { connect: { id: listID } } },
+        data: { text, isComplete, todoList: { connect: { id: listID } } },
       });
       res.status(200).json({ message: "Todo item added successfully." });
     } catch (error) {
@@ -86,23 +86,23 @@ async function handler(req, res) {
     }
   }
 
-  //  update the checkBox state
+  //  update the isComplete state
 
   if (req.method === "PATCH") {
-    const { id, checkBox } = req.body;
+    const { id, isComplete } = req.body;
 
     try {
       await prisma.todo.update({
         where: { id: id },
-        data: { checkBox: checkBox },
+        data: { isComplete: isComplete },
       });
       res.status(200).json({
-        message: "Valu of checkBox has been successfully updated.",
-        checkBox,
+        message: "Valu of isComplete has been successfully updated.",
+        isComplete,
       });
     } catch (error) {
       res.status(500).json({
-        message: "Failed to update the value of checkBox.",
+        message: "Failed to update the value of isComplete.",
         error: error.message,
       });
     }

@@ -9,7 +9,7 @@ const FetchTodosData = async (listID) => {
 
 const TodoItemsQuery = () => {
   const router = useRouter();
-  const listID = router.query.todoListID;
+  const listID = router.query.todoItems;
   return useQuery(["todoItems", listID], () => FetchTodosData(listID));
   // "listID" is the value from the params parameters. This ensures that the "useQuery" hook will re-fetch the data whenever the "listID" value changes.
   // useQuery("todoItems", FetchTodosData);

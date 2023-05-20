@@ -15,23 +15,23 @@ model User {
 }
 
 model TodoList {
-  id       Int      @id @default(autoincrement())
-  name     String
-  checkBox    Boolean  @default(false)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  userId   Int     // foreign key
-  user     User     @relation(fields: [userId], references: [id])
-  todos    Todo[]  
+  id            Int      @id @default(autoincrement())
+  name          String
+  isComplete    Boolean  @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  userId        Int     // foreign key
+  user          User     @relation(fields: [userId], references: [id])
+  todos         Todo[]  
 }
 
 model Todo {
-  id          Int       @id @default(autoincrement())
-  text        String
-  checkBox    Boolean   @default(false)
-  todoListId  Int       //  foreign key
-  todoList    TodoList  @relation(fields: [todoListId], references: [id], onDelete: Cascade)
-  awsUrls       AwsUrl[]
+  id            Int       @id @default(autoincrement())
+  text          String
+  isComplete    Boolean   @default(false)
+  todoListId    Int       //  foreign key
+  todoList      TodoList  @relation(fields: [todoListId], references: [id], onDelete: Cascade)
+  awsUrls        AwsUrl[]
 }
 
 model AwsUrl {

@@ -2,9 +2,7 @@ import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-import ListQuery from "./list-query";
-
-export function ListMutations() {
+function TodoListMutations() {
   const queryClient = useQueryClient();
 
   // ** CREATE MUTATION **
@@ -12,7 +10,7 @@ export function ListMutations() {
   const createListMutation = useMutation(
     async (listName) => {
       try {
-        const response = await axios.post("/api/lists", listName);
+        const response = await axios.post("/api/todos/lists", listName);
         return response.data;
       } catch (error) {
         console.error("Failed to create new Todo List:", error);
@@ -33,7 +31,7 @@ export function ListMutations() {
   const updateListMutation = useMutation(
     async (updatedList) => {
       try {
-        const response = await axios.put("/api/lists", updatedList);
+        const response = await axios.put("/api/todos/lists", updatedList);
         return response.data;
       } catch (error) {
         console.error("Failed to update list:", error);
@@ -49,12 +47,12 @@ export function ListMutations() {
     }
   );
 
-  // ** CHECKBOX MUTATION **
+  // ** isComplete MUTATION **
 
-  const toggleCheckBoxMutation = useMutation(
+  const toggleisCompleteMutation = useMutation(
     async (updatedList) => {
       try {
-        const response = await axios.patch("/api/lists", updatedList);
+        const response = await axios.patch("/api/todos/lists", updatedList);
         return response.data;
       } catch (error) {
         console.error("Failed to complete list:", error);
@@ -66,7 +64,7 @@ export function ListMutations() {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries("listItems");
-        if (data.checkBox === true) {
+        if (data.isComplete === true) {
           toast.success("ToDo List is successfully complete."),
             { autoClose: 700 };
         }
@@ -79,7 +77,9 @@ export function ListMutations() {
   const deleteListMutation = useMutation(
     async (id) => {
       try {
-        const response = await axios.delete("/api/lists", { data: { id } });
+        const response = await axios.delete("/api/todos/lists", {
+          data: { id },
+        });
         return response.data;
       } catch (error) {
         console.error("Failed to DELETE list:", error);
@@ -96,18 +96,12 @@ export function ListMutations() {
     }
   );
 
-  // I am sending those properties through "TodoMutations function" for "todo.js"
-  const { isLoading, isError, error, data } = ListQuery();
-
   return {
-    queryClient,
-    isLoading,
-    isError,
-    error,
-    data,
     updateListMutation,
-    toggleCheckBoxMutation,
+    toggleisCompleteMutation,
     deleteListMutation,
     createListMutation,
   };
 }
+
+export default TodoListMutations;

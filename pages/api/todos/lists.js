@@ -92,23 +92,23 @@ async function handler(req, res) {
     }
   }
 
-  //  update the checkBox state
+  //  update the isComplete state
 
   if (req.method === "PATCH") {
-    const { id, checkBox } = req.body;
+    const { id, isComplete } = req.body;
 
     try {
       await prisma.todoList.update({
         where: { id: id },
-        data: { checkBox: checkBox },
+        data: { isComplete: isComplete },
       });
       res.status(200).json({
-        message: "Valu of checkBox has been successfully updated.",
-        checkBox,
+        message: "Valu of isComplete has been successfully updated.",
+        isComplete,
       });
     } catch (error) {
       res.status(500).json({
-        message: "Failed to update the value of checkBox.",
+        message: "Failed to update the value of isComplete.",
         error: error.message,
       });
     }

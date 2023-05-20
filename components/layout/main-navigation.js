@@ -21,7 +21,7 @@ function MainNavigation() {
           </Link>
         ) : (
           <Link
-            href="/lists"
+            href="/todos/todo-lists"
             className="text-white font-bold text-xl tracking-tight hover:border-red-500 border-b-2 border-transparent transition duration-200 ease-in-out"
           >
             ToDo`s
@@ -33,7 +33,7 @@ function MainNavigation() {
             {!session && !loading && (
               <li>
                 <Link
-                  href="/auth"
+                  href="/auth/login"
                   className="text-gray-300 hover:text-white transition duration-300 ease-in-out sm:px-1.5 sm:py-1"
                 >
                   Login
@@ -44,7 +44,7 @@ function MainNavigation() {
             {session && (
               <li>
                 <Link
-                  href="/lists"
+                  href="/todos/todo-lists"
                   className="text-gray-300 hover:text-white transition duration-300 ease-in-out"
                 >
                   My ToDo's

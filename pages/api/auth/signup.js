@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function handlerSignup(req, res) {
   // Inserting new user email and password in DB
   if (req.method === "POST") {
-    const { email, password } = req.body;
+    const { email, password } = req.body.userData;
 
     if (
       !email ||
@@ -45,9 +45,10 @@ async function handlerSignup(req, res) {
     try {
       await prisma.user.create({ data: { email, password: hashedPassword } });
 
-      res
-        .status(200)
-        .json({ message: "User successfully created", status: true }); //success
+      res.status(200).json({
+        message: "User successfully created",
+        status: true,
+      }); //success
     } catch (error) {
       res
         .status(500)

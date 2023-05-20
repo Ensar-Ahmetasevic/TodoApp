@@ -4,63 +4,40 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 
-import { authMutations } from "@/requests/requests-for-auth/auth-mutations";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import Link from "next/link";
 
-function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true);
+function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-
-  const { createUser } = authMutations();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
-  // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
-
-  function switchAuthModeHandler() {
-    setIsLogin((prevState) => !prevState);
-  }
-
   async function submitHandler(data) {
+    //
     const enteredEmail = data.emailInput;
     const enteredPassword = data.passwordInput;
 
-    if (isLogin) {
-      setLoading(true);
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: enteredEmail,
-        password: enteredPassword,
-      });
-      if (!result.error) {
-        router.replace(`/todos/todo-lists`);
-      } else {
-        toast.error(result.error);
-        setLoading(false);
-      }
+    // "signIn" function is called with the provided credentials (email and password). It returns a "result" object that contains
+    // information about the sign-in process. If "result.error" is falsy, indicating that there was no error during the sign-in
+    // process. In that case, it uses the router.replace function to redirect the user to the specified rout.
+
+    const result = await signIn("credentials", {
+      redirect: false,
+      email: enteredEmail,
+      password: enteredPassword,
+    });
+
+    if (!result.error) {
+      // If there are no errors (!result.error is true), the user is redirected
+      router.replace(`/todos/todo-lists`);
     } else {
-      try {
-        setLoading(true);
-        const result = await createUser.mutateAsync({
-          email: enteredEmail,
-          password: enteredPassword,
-        });
-        if (result.status) {
-          router.replace("/");
-        } else {
-          toast.error(result.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      setLoading(false);
+      toast.error(result.error);
     }
   }
 
@@ -70,9 +47,7 @@ function AuthForm() {
 
   return (
     <section className="max-w-md w-full mx-auto sm:mt-10">
-      <h1 className="text-3xl text-center font-bold mb-8 sm:text-2xl">
-        {isLogin ? "Login" : "SignUp"}
-      </h1>
+      <h1 className="text-3xl text-center font-bold mb-8 sm:text-2xl">Login</h1>
 
       <form
         className="flex flex-col space-y-4"
@@ -99,7 +74,7 @@ function AuthForm() {
             type={!showPassword ? "password" : "text"}
             id="password"
             required
-            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full pr-10" // Add pr-10 for padding on the right to accommodate the button
+            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full pr-10"
           />
           <button
             className="absolute top-8 right-2 mt-2 text-xs text-gray-400 hover:text-gray-800 hover:font-bold" // Adjust top, right, and margin properties as needed
@@ -113,27 +88,21 @@ function AuthForm() {
         <div className="mx-4 flex flex-row sm:flex-col items-center justify-between">
           <button
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out"
-            disabled={loading}
+            disabled={isSubmitting}
+            type="submit"
           >
-            {loading ? (
-              <LoadingSpinnerButton />
-            ) : isLogin ? (
-              "Login"
-            ) : (
-              "Create Account"
-            )}
+            {isSubmitting ? <LoadingSpinnerButton /> : "Login"}
           </button>
-          <button
-            type="button"
-            onClick={switchAuthModeHandler}
+          <Link
             className="text-s text-blue-300 hover:text-blue-500 mt-2 sm:mt-2"
+            href="/auth/signup"
           >
-            {isLogin ? "Create new account" : "Login with existing account"}
-          </button>
+            Create new account
+          </Link>
         </div>
       </form>
     </section>
   );
 }
 
-export default AuthForm;
+export default LoginForm;

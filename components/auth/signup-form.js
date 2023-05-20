@@ -1,66 +1,47 @@
 import { useState } from "react";
-import { signIn } from "next-auth/client";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 
-import { authMutations } from "@/requests/requests-for-auth/auth-mutations";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import { authMutations } from "@/requests/requests-for-auth/auth-mutations";
 
-function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true);
+function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-
-  const { createUser } = authMutations();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
-  // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
+  const { createUser } = authMutations();
 
-  function switchAuthModeHandler() {
-    setIsLogin((prevState) => !prevState);
-  }
+  // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
+  //   function switchAuthModeHandler() {
+  //     setIsLogin((prevState) => !prevState);
+  //   }
 
   async function submitHandler(data) {
     const enteredEmail = data.emailInput;
     const enteredPassword = data.passwordInput;
 
-    if (isLogin) {
-      setLoading(true);
-      const result = await signIn("credentials", {
-        redirect: false,
+    try {
+      const result = await createUser.mutateAsync({
         email: enteredEmail,
         password: enteredPassword,
       });
-      if (!result.error) {
-        router.replace(`/todos/todo-lists`);
+
+      if (result.status) {
+        router.replace("/");
       } else {
-        toast.error(result.error);
-        setLoading(false);
+        toast.error(result.message);
       }
-    } else {
-      try {
-        setLoading(true);
-        const result = await createUser.mutateAsync({
-          email: enteredEmail,
-          password: enteredPassword,
-        });
-        if (result.status) {
-          router.replace("/");
-        } else {
-          toast.error(result.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      setLoading(false);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -71,7 +52,7 @@ function AuthForm() {
   return (
     <section className="max-w-md w-full mx-auto sm:mt-10">
       <h1 className="text-3xl text-center font-bold mb-8 sm:text-2xl">
-        {isLogin ? "Login" : "SignUp"}
+        SignUp
       </h1>
 
       <form
@@ -83,23 +64,22 @@ function AuthForm() {
             Your Email
           </label>
           <input
+            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
             {...register("emailInput", { required: true })}
             type="email"
             id="email"
-            required
-            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
           />
         </div>
+
         <div className="mb-4 mx-4 relative">
           <label htmlFor="password" className="block mb-1 font-semibold">
             Your Password
           </label>
           <input
+            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full pr-10"
             {...register("passwordInput", { required: true })}
             type={!showPassword ? "password" : "text"}
             id="password"
-            required
-            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full pr-10" // Add pr-10 for padding on the right to accommodate the button
           />
           <button
             className="absolute top-8 right-2 mt-2 text-xs text-gray-400 hover:text-gray-800 hover:font-bold" // Adjust top, right, and margin properties as needed
@@ -113,27 +93,21 @@ function AuthForm() {
         <div className="mx-4 flex flex-row sm:flex-col items-center justify-between">
           <button
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out"
-            disabled={loading}
+            disabled={isSubmitting}
           >
-            {loading ? (
-              <LoadingSpinnerButton />
-            ) : isLogin ? (
-              "Login"
-            ) : (
-              "Create Account"
-            )}
+            {isSubmitting ? <LoadingSpinnerButton /> : "Create Account"}
           </button>
-          <button
-            type="button"
-            onClick={switchAuthModeHandler}
+
+          <Link
             className="text-s text-blue-300 hover:text-blue-500 mt-2 sm:mt-2"
+            href="/auth/login"
           >
-            {isLogin ? "Create new account" : "Login with existing account"}
-          </button>
+            Login with existing account
+          </Link>
         </div>
       </form>
     </section>
   );
 }
 
-export default AuthForm;
+export default SignupForm;

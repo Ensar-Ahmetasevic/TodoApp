@@ -6,11 +6,10 @@ export function authMutations() {
   const queryClient = useQueryClient();
 
   const createUser = useMutation(
-    async (email, password) => {
+    async (userData) => {
       try {
         const response = await axios.post("/api/auth/signup", {
-          email,
-          password,
+          userData,
         });
         return response.data;
       } catch (error) {
@@ -27,6 +26,12 @@ export function authMutations() {
             displayed in the UI is always showing the latest data.
         */
         toast.success("User created successfully.", { autoClose: 700 });
+        setTimeout(() => {
+          toast.info("Use your Email and Password to Login", {
+            position: "bottom-center",
+            autoClose: 7000,
+          });
+        }, 2000);
       },
     }
   );

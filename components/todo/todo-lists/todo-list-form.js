@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form";
-import { ListMutations } from "../list-react-query/list-mutations";
 
+import TodoListMutations from "../../../requests/requests-for-todo-lists/todo-list-mutations";
 import ErrorNotification from "@/helpers/error";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import LoadingSpinner from "@/helpers/loading-spiner";
-import AllLists from "./all-lists";
+import TodoListQuery from "../../../requests/requests-for-todo-lists/todo-list-query";
 
-function TodoList() {
-  const { createListMutation, isLoading, isError, error } = ListMutations();
+function TodoListForm() {
+  const { createListMutation } = TodoListMutations();
+  const { isLoading, isError, error } = TodoListQuery();
 
   const {
     register,
@@ -21,11 +22,11 @@ function TodoList() {
     const newList = data.newListInput;
 
     createListMutation.mutateAsync({ listName: newList });
+
     reset(); // Reset the form after submission
   }
 
   if (isLoading) return <LoadingSpinner />;
-
   if (isError) return <ErrorNotification error={error} />;
 
   return (
@@ -62,12 +63,8 @@ function TodoList() {
           </div>
         </form>
       </div>
-
-      <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-7">
-        <AllLists />
-      </div>
     </section>
   );
 }
 
-export default TodoList;
+export default TodoListForm;

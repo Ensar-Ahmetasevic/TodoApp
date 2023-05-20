@@ -31,3 +31,10 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# ignore custom JS file
+CompareCode.js
+CompareCodecopy.js
+
+# ignore Info.txt file
+Info.txt

@@ -2,12 +2,13 @@ import { useQuery } from "react-query";
 import axios from "axios";
 
 const FetchListsData = async () => {
-  const response = await axios.get("/api/lists");
+  const response = await axios.get("/api/todos/lists");
+
   return response.data;
 };
 
-const ListQuery = () => {
+const TodoListQuery = () => {
   return useQuery("listItems", FetchListsData);
 };
 
-export default ListQuery;
+export default TodoListQuery;

@@ -7,14 +7,15 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import { TodoMutations } from "../todo-react-query/todo-mutations";
-import AwsUrlQuery from "../../todo-aws-url/url-react-query";
-import { URLMutations } from "../../todo-aws-url/url-mutations";
-import ErrorNotification from "@/helpers/error";
+import useDeleteTodoItemMutation from "@/requests/requests-for-todo-items/use-delete-todo-item-mutation";
+
+import TodoItemMutations from "../../../../requests/requests-for-todo-items/todo-items-mutations";
+import AwsUrlQuery from "../../../../requests/requests-for-aws-url/url-react-query";
+import AwsUrlMutations from "../../../../requests/requests-for-aws-url/url-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 
-export default function SingleItem({ item }) {
+function SingleTodoItem({ item }) {
   //
   const [editTodo, setEditTodo] = useState(null);
   const [deletingItemId, setDeletingItemId] = useState(null);
@@ -41,16 +42,11 @@ export default function SingleItem({ item }) {
   };
 
   const { data: URLdata } = AwsUrlQuery(addFileItemID);
-  const { createURLMutation, deleteURLMutation } = URLMutations();
+  const { createURLMutation, deleteURLMutation } = AwsUrlMutations();
+  const { updateTodoMutation, toggleisCompleteMutation, deleteTodoMutation } =
+    TodoItemMutations();
 
-  const {
-    error,
-    isLoading,
-    isError,
-    updateTodoMutation,
-    toggleCheckBoxMutation,
-    deleteTodoMutation,
-  } = TodoMutations();
+  const { mutateAsync: deleteTodoItemMutation } = useDeleteTodoItemMutation();
 
   // TODO ITEM MUTATIOS:
 
@@ -64,15 +60,16 @@ export default function SingleItem({ item }) {
     setEditTodo(null);
   }
 
-  function toggleCheckBoxHandler(id, checkBox) {
-    toggleCheckBoxMutation.mutateAsync({ id, checkBox: !checkBox });
+  function toggleisCompleteHandler(id, isComplete) {
+    toggleisCompleteMutation.mutateAsync({ id, isComplete: !isComplete });
     setAddFile(true);
     setShowFile(false);
+    setEditTodo(null);
   }
 
   function deleteItemHandler(id) {
     setDeletingItemId(id);
-    deleteTodoMutation.mutateAsync(id);
+    deleteTodoItemMutation(id);
     setAddFile(true);
     setShowFile(false);
   }
@@ -118,13 +115,10 @@ export default function SingleItem({ item }) {
     setShowFile(!showFile);
   }
 
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) return <ErrorNotification error={error} />;
-
   return (
     <div
       className={`mt-3 mb-3 sm:p-0 rounded-lg border-4 border-solid hover:pulse hover:bg-gray-800 ${
-        item.checkBox === false
+        item.isComplete === false
           ? " border-green-600 hover:border-green-400"
           : " border-red-600 hover:border-red-400"
       } `}
@@ -132,38 +126,42 @@ export default function SingleItem({ item }) {
       <li className="my-3" style={{ listStyle: "none" }}>
         <div className="grid grid-cols-3 gap-4">
           {""}
-          <div className="col-span-2 mx-5 sm:col-span-3 sm:ml-3 sm:mr-3">
-            <input
-              className="mr-1 mb-2 h-4 w-4 sm:h-3 sm:w-3 cursor-pointer accent-red-500"
-              type="checkbox"
-              id={item.id}
-              name={item.id}
-              checked={item.checkBox} // enables the checkbox to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
-              onChange={() => {
-                toggleCheckBoxHandler(item.id, item.checkBox);
-              }}
-            />
-            <label
-              className={`mx-1 text-xl sm:text-lg ${
-                item.checkBox ? "checked" : ""
-              }`}
-              htmlFor={item.checkBox.toString()}
-              // If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
-            >
-              {toggleCheckBoxMutation.isLoading ? (
-                <>
-                  <LoadingSpinner />
-                  {item.text}
-                </>
-              ) : (
-                item.text
-              )}
-            </label>
+          <div className="col-span-2 mx-16 sm:col-span-3 sm:ml-3 sm:mr-3">
+            <div className="flex justify-start">
+              <div>
+                <input
+                  className="mr-1 mt-2 h-4 w-4 sm:h-3 sm:w-3 cursor-pointer accent-red-500"
+                  type="checkbox"
+                  id={item.id}
+                  name={item.id}
+                  checked={item.isComplete} // enables the isComplete to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
+                  onChange={() => {
+                    toggleisCompleteHandler(item.id, item.isComplete);
+                  }}
+                />
+              </div>
+
+              <div
+                className={`text-left  mx-1 text-xl sm:text-lg ${
+                  item.isComplete ? "checked" : ""
+                }`}
+                style={{ whiteSpace: "pre-wrap" }} //preserve the formatting and spacing
+              >
+                {toggleisCompleteMutation.isLoading ? (
+                  <>
+                    <LoadingSpinner />
+                    {item.text}
+                  </>
+                ) : (
+                  item.text
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="col-span-1 sm:col-span-3">
             <div className="py-2 mr-3 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0 sm:mr-2 sm:ml-0 sm:mt-0">
-              {item.checkBox ? (
+              {item.isComplete ? (
                 <button
                   className=" my-2 px-2 border-2 rounded-md  hover:bg-rose-600 "
                   onClick={() => deleteItemHandler(item.id)}
@@ -311,8 +309,8 @@ export default function SingleItem({ item }) {
           </div>
         </div>
         <div>
-          {/*  */}
           {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
+
           {editTodo && editTodo.id === item.id ? ( // if "editTodo" is null it will no be visible"
             <section className="grid grid-cols-4 gap-2 items-center">
               {" "}
@@ -320,9 +318,12 @@ export default function SingleItem({ item }) {
                 {" "}
                 <form className=" mt-5 max-w-md mx-auto">
                   <div className="sm:flex">
-                    <input
-                      className="w-80 p-2 font-bold text-slate-800 rounded-md border-2"
-                      type="text"
+                    <textarea
+                      className="w-full  bg-transparent px-3 py-3 text-slate-100 rounded-md sm:text-sm  border border-r-4 border-l-4 border-gray-500 focus:ring-1 focus:r-ring-gray-500 focus:outline-none"
+                      style={{
+                        maxHeight: "200px",
+                        height: "120px",
+                      }}
                       value={editTodo.text}
                       onChange={(event) =>
                         setEditTodo({
@@ -356,3 +357,5 @@ export default function SingleItem({ item }) {
     </div>
   );
 }
+
+export default SingleTodoItem;
