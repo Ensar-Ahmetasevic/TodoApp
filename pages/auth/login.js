@@ -1,7 +1,7 @@
 import LoginForm from "@/components/auth/login-form";
 import Layout from "@/components/layout/layout";
 
-function LoginPage(props) {
+function LoginPage() {
   return (
     <Layout>
       <LoginForm />
