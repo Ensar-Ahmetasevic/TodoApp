@@ -88,28 +88,31 @@ function TodoSingleList({ list }) {
           )}
         </div>
 
-        <div className=" col-end-9 col-span-3 sm:col-end-9 sm:col-span-2 sm:border-0 sm:mr-2 sm:ml-0 py-1 mx-2  border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg ">
+        <div className="col-end-9 col-span-3 sm:col-end-9 sm:col-span-3 sm:border-0 sm:mr-2 sm:ml-0 py-1 mx-2  border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg">
           {list.isComplete ? (
-            <button
-              className="px-2 border-2 rounded-md  hover:bg-rose-600"
-              onClick={() => deleteListHandler(list.id)}
-            >
-              {deleteListMutation.isLoading && deletingListId === list.id ? (
-                <LoadingSpinnerButton />
-              ) : (
-                "Delete"
-              )}
-            </button>
+            <div className="sm:flex sm:justify-end">
+              <button
+                className="px-2 border-2 rounded-md  hover:bg-rose-600"
+                onClick={() => deleteListHandler(list.id)}
+              >
+                {deleteListMutation.isLoading && deletingListId === list.id ? (
+                  <LoadingSpinnerButton />
+                ) : (
+                  "Delete"
+                )}
+              </button>
+            </div>
           ) : (
             <>
-              <div>
+              <div className="sm:flex sm:justify-end">
                 <button
                   className="p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2 sm:px-1 sm:p-0"
                   onClick={() => router.push(`/todos/${list.id}`)}
                 >
                   {isLoading ? <LoadingSpinnerButton /> : "Open"}
                 </button>
-
+              </div>
+              <div className="sm:flex sm:justify-end">
                 <button
                   className=" mt-3 mb-3 mx-3 px-1 border-2 rounded-md  hover:bg-amber-400 sm:mx-0 sm:mt-2 sm:mb-2"
                   onClick={() => updateListHandler(list)}
@@ -120,7 +123,8 @@ function TodoSingleList({ list }) {
                     "Update"
                   )}
                 </button>
-
+              </div>
+              <div className="sm:flex sm:justify-end">
                 <button
                   className=" px-2 border-2 rounded-md  hover:bg-rose-600"
                   onClick={() => deleteListHandler(list.id)}

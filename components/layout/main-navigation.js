@@ -29,7 +29,7 @@ function MainNavigation() {
         )}
 
         <nav>
-          <ul className=" items-center flex space-x-4 sm:ml-2">
+          <ul className="items-center flex space-x-4 sm:ml-8">
             {!session && !loading && (
               <li>
                 <Link

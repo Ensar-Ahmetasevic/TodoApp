@@ -8,35 +8,35 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
-  password String
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String
   todoLists TodoList[]
 }
 
 model TodoList {
-  id            Int      @id @default(autoincrement())
-  name          String
-  isComplete    Boolean  @default(false)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  userId        Int     // foreign key
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  todos         Todo[]  
+  id         Int      @id @default(autoincrement())
+  name       String
+  isComplete Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userId     Int // foreign key
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  todos      Todo[]
 }
 
 model Todo {
-  id            Int       @id @default(autoincrement())
-  text          String
-  isComplete    Boolean   @default(false)
-  todoListId    Int       //  foreign key
-  todoList      TodoList  @relation(fields: [todoListId], references: [id], onDelete: Cascade)
-  awsUrls        AwsUrl[]
+  id         Int      @id @default(autoincrement())
+  text       String
+  isComplete Boolean  @default(false)
+  todoListId Int //  foreign key
+  todoList   TodoList @relation(fields: [todoListId], references: [id], onDelete: Cascade)
+  awsUrls    AwsUrl[]
 }
 
 model AwsUrl {
-  id        Int      @id @default(autoincrement())
-  url       String
-  todoId    Int      // foreign key
-  todo      Todo     @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  id     Int    @id @default(autoincrement())
+  url    String
+  todoId Int // foreign key
+  todo   Todo   @relation(fields: [todoId], references: [id], onDelete: Cascade)
 }
