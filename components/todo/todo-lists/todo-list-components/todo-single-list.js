@@ -60,7 +60,7 @@ function TodoSingleList({ list }) {
             htmlFor={list.id}
 
             // htmlFor={list.isComplete.toString()}
-            //If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string
+            //If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string.
           >
             {toggleisCompleteMutation.isLoading ? (
               <>
