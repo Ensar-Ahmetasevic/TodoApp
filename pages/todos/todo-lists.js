@@ -1,5 +1,5 @@
-import { getSession } from "next-auth/client";
 import { Fragment } from "react";
+import { getServerSideProps } from "@/helpers/getServerSideProps";
 
 import Layout from "@/components/layout/layout";
 import TodoAllLists from "@/components/todo/todo-lists/todo-all-lists";
@@ -18,21 +18,6 @@ function TodoListsHP() {
   );
 }
 
-export async function getServerSideProps(context) {
-  const session = await getSession({ req: context.req });
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: { session },
-  };
-}
+export { getServerSideProps };
 
 export default TodoListsHP;

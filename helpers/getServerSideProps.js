@@ -1,14 +1,4 @@
-import LoginForm from "@/components/auth/login-form";
-import Layout from "@/components/layout/layout";
 import { getSession } from "next-auth/client";
-
-function LoginPage() {
-  return (
-    <Layout>
-      <LoginForm />
-    </Layout>
-  );
-}
 
 export async function getServerSideProps(context) {
   // We have access to the request object through "context" when are using "getServerSideProps". And we pass this request into "getSession" function
@@ -21,10 +11,10 @@ export async function getServerSideProps(context) {
 
   // And "session" will be null if the user is "not authenticated", and it will be a valid session object if the user is "authenticated".
 
-  if (session) {
+  if (!session) {
     return {
       redirect: {
-        destination: "/todos/todo-lists",
+        destination: "/",
         permanent: false,
         // Adding "permanent" to indicate if that's a permanent redirect, which will always apply, or only a temporary one. And here we want to set
         // "permanent" to "false" to make it clear that it's only this time that we redirect because the user is not logged in.
@@ -36,5 +26,3 @@ export async function getServerSideProps(context) {
     props: { session },
   };
 }
-
-export default LoginPage;

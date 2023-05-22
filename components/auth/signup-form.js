@@ -19,11 +19,6 @@ function SignupForm() {
 
   const { createUser } = authMutations();
 
-  // The callback function "prevState => !prevState" takes the previous value of "isLogin" and returns the opposite value.
-  //   function switchAuthModeHandler() {
-  //     setIsLogin((prevState) => !prevState);
-  //   }
-
   async function submitHandler(data) {
     const enteredEmail = data.emailInput;
     const enteredPassword = data.passwordInput;
@@ -33,9 +28,10 @@ function SignupForm() {
         email: enteredEmail,
         password: enteredPassword,
       });
-
+      // If the user creation is successful
       if (result.status) {
-        router.replace("/");
+        // Redirect the user to the home page
+        router.replace("/auth/login");
       } else {
         toast.error(result.message);
       }

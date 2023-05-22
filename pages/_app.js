@@ -1,6 +1,5 @@
 import "@/styles/tailwind.css";
 import "@/styles/globals.css";
-import { getSession } from "next-auth/client";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useState } from "react";
@@ -34,21 +33,4 @@ export default function App({ Component, pageProps }) {
       </Provider>
     </QueryClientProvider>
   );
-}
-
-export async function getServerSideProps(context) {
-  const session = await getSession({ req: context.req });
-
-  if (session) {
-    return {
-      redirect: {
-        destination: "/12",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: { session },
-  };
 }

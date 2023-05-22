@@ -6,8 +6,6 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import LoadingSpinner from "@/helpers/loading-spiner";
-import ErrorNotification from "@/helpers/error";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);

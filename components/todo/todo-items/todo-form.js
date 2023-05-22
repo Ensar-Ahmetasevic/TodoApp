@@ -1,9 +1,8 @@
 import { useForm } from "react-hook-form";
 
 import TodoItemMutations from "@/requests/requests-for-todo-items/todo-items-mutations";
-import LoadingSpinner from "@/helpers/loading-spiner";
+
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import ErrorNotification from "@/helpers/error";
 
 function TodoForm() {
   const {
@@ -13,7 +12,7 @@ function TodoForm() {
     formState: { errors },
   } = useForm();
 
-  const { isLoading, isError, error, createTodoMutation } = TodoItemMutations();
+  const { createTodoMutation } = TodoItemMutations();
 
   function sendTextItemHandler(data) {
     //"data" from react-hook-form
@@ -22,9 +21,6 @@ function TodoForm() {
     createTodoMutation.mutateAsync({ text: enteredTodo, isComplete: false });
     reset(); // Reset the form after submission
   }
-
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) return <ErrorNotification error={error} />;
 
   return (
     <section className=" grid grid-cols-6 gap-4 mx-20 sm:mx-5">
@@ -42,6 +38,7 @@ function TodoForm() {
               style={{
                 maxHeight: "200px",
                 height: "120px",
+                overflow: "hidden",
               }}
               placeholder="Enter your new todo ..."
               maxLength={1000}

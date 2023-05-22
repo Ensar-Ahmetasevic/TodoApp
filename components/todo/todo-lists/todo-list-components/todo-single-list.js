@@ -39,7 +39,14 @@ function TodoSingleList({ list }) {
   }
 
   return (
-    <li className="my-3" key={list.id} style={{ listStyle: "none" }}>
+    <li
+      className={`col-start-2 col-span-4 rounded-lg my-10 py-3 border-4 border-solid hover:bg-gray-800 
+      ${
+        list.isComplete === false
+          ? " border-green-600 hover:border-green-400"
+          : " border-red-600 hover:border-red-400"
+      } `}
+    >
       <div className="grid grid-cols-8 gap-2">
         {/*  */}
         <div className="col-start-1 col-end-6 mx-5 sm:col-start-1 sm:col-span-5 sm:ml-5 sm:mr-0 ">
@@ -73,22 +80,26 @@ function TodoSingleList({ list }) {
           </label>
         </div>
 
-        <div className="col-end-10 col-span-2 sm:text-xs  sm:col-span-3 sm:mr-2">
-          <p className="text-left sm:text-right">
-            <b>Created:</b> <br />
-            {dayjs(list.createdAt).format("DD/MM/YYYY")}
-          </p>
-          {dayjs(list.createdAt).isSame(list.updatedAt, "day") ? (
-            ""
-          ) : (
-            <p className="text-left mt-1 sm:text-right">
-              <b>Last update:</b> <br />
-              {dayjs(list.updatedAt).format("DD/MM/YYYY")}
-            </p>
-          )}
+        <div className="col-end-10 col-span-2 sm:text-xs sm:col-span-3">
+          <div className="flex justify-end  mr-5 sm:mr-2">
+            <div className="flex-col">
+              <p className="text-left sm:text-right">
+                <b>Created:</b> <br />
+                {dayjs(list.createdAt).format("DD/MM/YYYY")}
+              </p>
+              {dayjs(list.createdAt).isSame(list.updatedAt, "day") ? (
+                ""
+              ) : (
+                <p className="text-left mt-1 sm:text-right">
+                  <b>Last update:</b> <br />
+                  {dayjs(list.updatedAt).format("DD/MM/YYYY")}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="col-end-9 col-span-3 sm:col-end-9 sm:col-span-3 sm:border-0 sm:mr-2 sm:ml-0 py-1 mx-2  border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg">
+        <div className="col-end-9 col-span-3 sm:col-end-9 sm:col-span-3 sm:border-0 sm:mr-2 sm:ml-0 py-3 mx-2  border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg">
           {list.isComplete ? (
             <div className="sm:flex sm:justify-end">
               <button
