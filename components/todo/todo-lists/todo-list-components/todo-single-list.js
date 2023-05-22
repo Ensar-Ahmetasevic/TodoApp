@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 
 import TodoListQuery from "../../../../requests/requests-for-todo-lists/todo-list-query";
@@ -8,29 +9,38 @@ import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 
 function TodoSingleList({ list }) {
-  const [editList, setEditList] = useState(null);
+  const [listData, setListData] = useState(null);
   const [deletingListId, setDeletingListId] = useState(null);
   const [updateListId, setUpdateListId] = useState(null);
 
   const router = useRouter();
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const { isLoading } = TodoListQuery();
   const { updateListMutation, toggleisCompleteMutation, deleteListMutation } =
     TodoListMutations();
 
-  function updateListHandler(list) {
-    setEditList(list);
+  function ListDataFetcher(list) {
+    setListData(list);
   }
 
-  function updateListItem(id, name) {
-    setUpdateListId(id);
+  const updateListHandler = (data) => {
+    // data from react-hook-form
+    const name = data.name;
+    const id = listData.id;
+
     updateListMutation.mutateAsync({ id, name });
-    setEditList(null);
-  }
+    setListData(null);
+  };
 
   function toggleisCompleteHandler(id, isComplete) {
     toggleisCompleteMutation.mutateAsync({ id, isComplete: !isComplete });
-    setEditList(null);
+    setListData(null);
   }
 
   function deleteListHandler(id) {
@@ -126,7 +136,7 @@ function TodoSingleList({ list }) {
               <div className="sm:flex sm:justify-end">
                 <button
                   className=" mt-3 mb-3 mx-3 px-1 border-2 rounded-md  hover:bg-amber-400 sm:mx-0 sm:mt-2 sm:mb-2"
-                  onClick={() => updateListHandler(list)}
+                  onClick={() => ListDataFetcher(list)}
                 >
                   {updateListMutation.isLoading && updateListId === list.id ? (
                     <LoadingSpinnerButton />
@@ -153,34 +163,33 @@ function TodoSingleList({ list }) {
       </div>
 
       {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
-      {editList && editList.id === list.id ? ( // if "editList" is null it will no be visible"
+      {listData && listData.id === list.id ? ( // if "listData" is null it will no be visible"
         <section className="grid grid-cols-6 gap-4">
           <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-6 sm:mx-4 ">
-            <form className="mt-5  max-w-md mx-auto">
+            <form
+              className="mt-5 max-w-md mx-auto"
+              onSubmit={handleSubmit(updateListHandler)}
+            >
               <div className="flex">
                 <input
                   className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full sm:text-sm"
                   type="text"
-                  value={editList.name}
-                  onChange={(event) =>
-                    setEditList({
-                      ...editList,
-                      name: event.target.value,
-                    })
-                  }
+                  defaultValue={listData.name}
+                  {...register("name")}
+                  // defaultValu + entered text we can access that value using the registered field named "name".
                 />
               </div>
 
               <div className="mt-5">
                 <button
                   className=" mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
-                  onClick={() => updateListItem(editList.id, editList.name)}
+                  type="submit"
                 >
                   Update
                 </button>
                 <button
                   className="ml-1 px-1 border-2 rounded-md  hover:bg-slate-500"
-                  onClick={() => setEditList(null)}
+                  onClick={() => setListData(null)}
                 >
                   Cancel
                 </button>
