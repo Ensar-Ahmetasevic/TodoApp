@@ -7,11 +7,11 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import TodoItemMutations from "../../../../requests/requests-for-todo-items/todo-items-mutations";
 import AwsUrlQuery from "../../../../requests/requests-for-aws-url/url-react-query";
 import AwsUrlMutations from "../../../../requests/requests-for-aws-url/url-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import TodoItemMutations from "@/requests/requests-for-todo-items/todo-items-mutations";
 
 function SingleTodoItem({ item }) {
   //
@@ -113,7 +113,8 @@ function SingleTodoItem({ item }) {
 
   return (
     <li
-      className={`my-10 py-3 sm:p-0 rounded-lg border-4 border-solid hover:pulse hover:bg-gray-800 ${
+      className={`my-10 py-10 lg:p-0 rounded-lg border-4 border-solid hover:pulse hover:bg-gray-800 
+      ${
         item.isComplete === false
           ? " border-green-600 hover:border-green-400"
           : " border-red-600 hover:border-red-400"
@@ -121,26 +122,29 @@ function SingleTodoItem({ item }) {
     >
       <div className="grid grid-cols-3 gap-4">
         {""}
-        <div className="col-span-2 mx-16 sm:col-span-3 sm:ml-3 sm:mr-3">
+        <div className="col-span-2 ml-10 lg:col-span-3 lg:mx-3 lg:mt-3">
           <div className="flex justify-start">
             <div>
               <input
-                className="mr-1 mt-2 h-4 w-4 sm:h-3 sm:w-3 cursor-pointer accent-red-500"
+                className="w-4 h-4 mt-2 mr-1 peer cursor-pointerlg:h-3 lg:w-3 accent-red-500"
                 type="checkbox"
                 id={item.id}
                 name={item.id}
-                checked={item.isComplete} // enables the isComplete to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
+                checked={item.isComplete}
+                // enables the isComplete to remember the value (true or false), i.e. if it is "true", it will remember
+                // and keep that little check mark
                 onChange={() => {
                   toggleisCompleteHandler(item.id, item.isComplete);
                 }}
               />
             </div>
 
-            <div
-              className={`text-left  mx-1 text-xl sm:text-lg ${
-                item.isComplete ? "checked" : ""
+            <label
+              className={`mx-1 text-xl text-left lg:text-lg ${
+                item.isComplete ? "line-through text-slate-400" : ""
               }`}
-              style={{ whiteSpace: "pre-wrap" }} //preserve the formatting and spacing
+              style={{ whiteSpace: "pre-wrap" }}
+              htmlFor={item.id}
             >
               {toggleisCompleteMutation.isLoading ? (
                 <>
@@ -150,18 +154,18 @@ function SingleTodoItem({ item }) {
               ) : (
                 item.text
               )}
-            </div>
+            </label>
           </div>
         </div>
 
-        <div className="col-span-1 sm:col-span-3">
-          <div className="py-2 mr-3 mt-10 border-2 border-solid border-gray-500 hover:border-gray-100 rounded-lg sm:border-0 sm:mr-2 sm:ml-0 sm:mt-0">
+        <div className="col-span-1 lg:col-span-3">
+          <div className="py-2 mt-10 mr-3 border-2 border-gray-500 border-solid rounded-lg hover:border-gray-100 lg:border-0 lg:mr-2 lg:ml-0 lg:mt-0">
             {item.isComplete ? (
               <button
-                className=" my-2 px-2 border-2 rounded-md  hover:bg-rose-600 "
+                className="px-2 my-2 border-2 rounded-md hover:bg-rose-600"
                 onClick={() => deleteItemHandler(item.id)}
               >
-                {deleteTodoMutation.isLoading && deletingItemId === item.id ? (
+                {deleteTodoMutation.isLoading ? (
                   <LoadingSpinnerButton />
                 ) : (
                   "Delete"
@@ -170,10 +174,10 @@ function SingleTodoItem({ item }) {
             ) : (
               <>
                 <button
-                  className=" px-1 border-2 rounded-md  hover:bg-amber-400"
+                  className="px-1 border-2 rounded-md hover:bg-amber-400"
                   onClick={() => updateItemHandler(item)}
                 >
-                  {updateTodoMutation.isLoading && updateItemId === item.id ? (
+                  {updateTodoMutation.isLoading ? (
                     <LoadingSpinnerButton />
                   ) : (
                     "Update"
@@ -181,10 +185,10 @@ function SingleTodoItem({ item }) {
                 </button>
 
                 <button
-                  className="mx-2 px-2 my-2 border-2 rounded-md  hover:bg-rose-600"
+                  className="px-2 mx-2 my-2 border-2 rounded-md hover:bg-rose-600"
                   onClick={() => deleteItemHandler(item.id)}
                 >
-                  {deleteTodoMutation.isLoading && deletingItemId == item.id ? (
+                  {deleteTodoMutation.isLoading ? (
                     <LoadingSpinnerButton />
                   ) : (
                     "Delete"
@@ -200,11 +204,11 @@ function SingleTodoItem({ item }) {
                   {addFile ? "Add File" : "Cancel"}
                 </button>
 
-                {!addFile && addFileItemID === item.id && (
-                  <div className="ml-2 sm:ml-0 ">
-                    <div className="sm:w-52">
+                {!addFile && (
+                  <div className="ml-2 lg:ml-0 ">
+                    <div className="lg:ml-5">
                       <input
-                        className=" my-5 sm:w-full sm:ml-2 sm:mt-6 sm:my-3"
+                        className="block w-full mt-5 text-sm text-slate-300 file:mr-2 file:py-2 file:px-2 file:rounded-full file:border-2 file:text-sm file:font-semibold file:bg-blue-50 file:text-black-700 hover:file:bg-blue-200"
                         type="file"
                         name="file"
                         onChange={(e) => handleFilesChange(e)}
@@ -214,7 +218,7 @@ function SingleTodoItem({ item }) {
                     <br />
                     <div>
                       <button
-                        className="  px-2 border-2 rounded-md hover:bg-sky-700"
+                        className="px-2 border-2 rounded-md hover:bg-sky-700"
                         type="submit"
                         onClick={() => saveFilesChange(item.id)}
                       >
@@ -228,7 +232,7 @@ function SingleTodoItem({ item }) {
 
                     <div>
                       <button
-                        className={`ml-2 px-2 border-2 rounded-md sm:px-1 sm: mt-2 ${
+                        className={`ml-2 px-2 border-2 rounded-md lg:px-1 lg: mt-2 ${
                           !showFile
                             ? "hover:bg-green-600"
                             : "hover:bg-slate-500"
@@ -243,11 +247,10 @@ function SingleTodoItem({ item }) {
               </>
             )}
 
-            <div className="col-end-9 col-span-3 ">
+            <div className="col-span-3 col-end-9 ">
               <>
-                {showFile &&
-                URLdata?.url?.length &&
-                addFileItemID === item.id ? ( // if the ShowFile === false and if the URL array is not empty
+                {showFile && URLdata?.url?.length ? (
+                  // if the ShowFile === false and if the URL array is not empty
                   <div className="mt-10">
                     <h2>{`Yor number of files: ${URLdata.url.length}`}</h2>
                     <p>Please scroll to the side</p>
@@ -262,8 +265,8 @@ function SingleTodoItem({ item }) {
                     />
                     <Slider {...settings}>
                       {URLdata.url.map((file) => (
-                        <div className="w-1/4 h-1/4 p-4" key={file.id}>
-                          <div className="w-full h-full flex justify-center items-center">
+                        <div className="w-1/4 p-4 h-1/4" key={file.id}>
+                          <div className="flex items-center justify-center w-full h-full">
                             <Image
                               className="rounded-md"
                               src={file.url}
@@ -274,7 +277,7 @@ function SingleTodoItem({ item }) {
                           </div>
                           <div className="mt-6">
                             <button
-                              className="px-1 border-2 rounded-md hover:bg-green-600 mr-2"
+                              className="px-1 mr-2 border-2 rounded-md hover:bg-green-600"
                               onClick={() => router.push(`${file.url}`)}
                             >
                               Open
@@ -304,15 +307,13 @@ function SingleTodoItem({ item }) {
       <div>
         {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
 
-        {editTodo && editTodo.id === item.id ? ( // if "editTodo" is null it will no be visible"
-          <section className="grid grid-cols-4 gap-2 items-center">
-            {" "}
-            <div className="col-start-2 col-span-2 sm:col-start-1 sm:col-span-6 sm:mx-4 sm:text-sm">
-              {" "}
-              <form className=" mt-5 max-w-md mx-auto">
-                <div className="sm:flex">
+        {editTodo ? ( // if "editTodo" is null it will no be visible"
+          <section className="grid items-center grid-cols-4 gap-2">
+            <div className="col-span-2 col-start-2 lg:col-start-1 lg:col-span-6 lg:mx-4 lg:text-sm">
+              <form className="max-w-md mx-auto mt-5 ">
+                <div className="lg:flex">
                   <textarea
-                    className="w-full  bg-transparent px-3 py-3 text-slate-100 rounded-md sm:text-sm  border border-r-4 border-l-4 border-gray-500 focus:ring-1 focus:r-ring-gray-500 focus:outline-none"
+                    className="w-full px-3 py-3 bg-transparent border border-l-4 border-r-4 border-gray-500 rounded-md text-slate-100 lg:text-sm focus:ring-1 focus:r-ring-gray-500 focus:outline-none"
                     style={{
                       maxHeight: "200px",
                       height: "120px",
@@ -328,15 +329,15 @@ function SingleTodoItem({ item }) {
                   />
                 </div>
 
-                <div className=" flex justify-center mt-5">
+                <div className="flex justify-center mt-5 ">
                   <button
-                    className=" mr-1 px-1 border-2 rounded-md  hover:bg-amber-400"
+                    className="px-1 mr-1 border-2 rounded-md hover:bg-amber-400"
                     onClick={() => updateTodoItem(editTodo.id, editTodo.text)}
                   >
                     Update
                   </button>
                   <button
-                    className="ml-2 px-1 border-2 rounded-md  hover:bg-slate-500"
+                    className="px-1 ml-2 border-2 rounded-md hover:bg-slate-500"
                     onClick={() => setEditTodo(null)}
                   >
                     Cancel

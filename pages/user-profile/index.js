@@ -1,8 +1,8 @@
 import Layout from "@/components/layout/layout";
-import UserProfile from "../components/profile/user-profile";
-import { getServerSideProps } from "@/helpers/getServerSideProps";
+import UserProfile from "../../components/profile/user-profile";
+import { getServerSideProps } from "@/helpers/verification-of-user-auth";
 
-function ProfilePage() {
+function UseProfile() {
   return (
     <Layout>
       <section className="mt-8">
@@ -14,4 +14,4 @@ function ProfilePage() {
 
 export { getServerSideProps };
 
-export default ProfilePage;
+export default UseProfile;

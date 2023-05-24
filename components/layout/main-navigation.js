@@ -55,7 +55,7 @@ function MainNavigation() {
             {session && (
               <li>
                 <Link
-                  href="/profile"
+                  href="/user-profile"
                   className="text-gray-300 hover:text-white transition duration-300 ease-in-out mx-2 sm:mx:0"
                 >
                   Profile

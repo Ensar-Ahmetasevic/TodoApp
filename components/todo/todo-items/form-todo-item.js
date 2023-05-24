@@ -1,10 +1,9 @@
 import { useForm } from "react-hook-form";
 
 import TodoItemMutations from "@/requests/requests-for-todo-items/todo-items-mutations";
-
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 
-function TodoForm() {
+function FormTodoItem() {
   const {
     register,
     handleSubmit,
@@ -69,4 +68,4 @@ function TodoForm() {
   );
 }
 
-export default TodoForm;
+export default FormTodoItem;

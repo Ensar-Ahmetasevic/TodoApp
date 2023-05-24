@@ -1,9 +1,9 @@
 import { sortBy } from "lodash";
 
-import TodoSingleList from "./todo-list-components/todo-single-list";
 import TodoListQuery from "@/requests/requests-for-todo-lists/todo-list-query";
+import SingleTodoList from "./todo-list-components/single-todo-list";
 
-function TodoAllLists() {
+function AllTodoLists() {
   const { data: listsData } = TodoListQuery();
 
   return (
@@ -11,7 +11,7 @@ function TodoAllLists() {
       <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-7">
         <ul>
           {sortBy(listsData?.allLists, ["isComplete"]).map((list) => (
-            <TodoSingleList key={list.id} list={list} />
+            <SingleTodoList key={list.id} list={list} />
           ))}
         </ul>
       </div>
@@ -19,4 +19,4 @@ function TodoAllLists() {
   );
 }
 
-export default TodoAllLists;
+export default AllTodoLists;

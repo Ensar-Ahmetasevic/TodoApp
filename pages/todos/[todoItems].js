@@ -1,9 +1,9 @@
 import { Fragment } from "react";
 
-import AllItems from "@/components/todo/todo-items/all-items";
-import TodoForm from "@/components/todo/todo-items/todo-form";
+import AllTodoItems from "@/components/todo/todo-items/all-todo-items";
+import FormTodoItem from "@/components/todo/todo-items/form-todo-item";
 import Layout from "@/components/layout/layout";
-import { getServerSideProps } from "@/helpers/getServerSideProps";
+import { getServerSideProps } from "@/helpers/verification-of-user-auth";
 import TodoItemsQuery from "@/requests/requests-for-todo-items/todo-items-query";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import ErrorNotification from "@/helpers/error";
@@ -16,9 +16,9 @@ function HomePage() {
   return (
     <Layout>
       <Fragment>
-        <section className="pt-8 ">
-          <TodoForm />
-          <AllItems />
+        <section className="pt-8">
+          <FormTodoItem />
+          <AllTodoItems />
         </section>
       </Fragment>
     </Layout>

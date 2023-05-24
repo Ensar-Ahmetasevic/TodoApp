@@ -1,13 +1,13 @@
 import { sortBy, map, filter } from "lodash";
 import { useRouter } from "next/router";
 
-import SingleTodoItem from "./todo-components/single-todo-item";
 import TodoListQuery from "../../../requests/requests-for-todo-lists/todo-list-query";
 import TodoItemsQuery from "../../../requests/requests-for-todo-items/todo-items-query";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import ErrorNotification from "@/helpers/error";
+import SingleTodoItem from "./todo-item-components/single-todo-item";
 
-export default function AllItems() {
+function AllTodoItems() {
   const router = useRouter();
   const listID = parseInt(router.query.todoItems);
 
@@ -48,3 +48,5 @@ export default function AllItems() {
     </section>
   );
 }
+
+export default AllTodoItems;

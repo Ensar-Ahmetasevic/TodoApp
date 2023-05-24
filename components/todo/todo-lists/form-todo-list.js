@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import TodoListMutations from "../../../requests/requests-for-todo-lists/todo-list-mutations";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 
-function TodoListForm() {
+function FormTodoList() {
   const { createListMutation } = TodoListMutations();
 
   const {
@@ -60,4 +60,4 @@ function TodoListForm() {
   );
 }
 
-export default TodoListForm;
+export default FormTodoList;
