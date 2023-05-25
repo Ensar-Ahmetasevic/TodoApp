@@ -123,7 +123,7 @@ function SingleTodoList({ list }) {
             <>
               <div className="sm:flex sm:justify-end ">
                 <button
-                  className=" animate-ping  p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2 sm:px-1 sm:p-0"
+                  className="animate-bounce p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2 sm:px-1 sm:p-0"
                   onClick={() => router.push(`/todos/${list.id}`)}
                 >
                   {isLoading ? <LoadingSpinnerButton /> : "Open"}

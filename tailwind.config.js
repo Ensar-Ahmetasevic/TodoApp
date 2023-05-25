@@ -9,7 +9,7 @@ module.exports = {
     extend: {
       animation: {
         pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        bounce: "bounce 1s infinite",
+        bounce: "bounce 1.5s infinite",
         spin: "spin 2s linear infinite",
         ping: "ping 1s cubic-bezier(1, 1, 0.2, 0) 0.5s",
       },
@@ -24,11 +24,11 @@ module.exports = {
         },
         bounce: {
           "0%, 100%": {
-            transform: "translateY(-25%)",
+            transform: "translateY(0%)",
             animationTimingFunction: "cubic-bezier(0.8, 0, 1, 1)",
           },
           "50%": {
-            transform: "translateY(0)",
+            transform: "translateY(10%)",
             animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)",
           },
         },
