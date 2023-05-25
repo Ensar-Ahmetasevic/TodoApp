@@ -56,34 +56,34 @@ function SingleTodoList({ list }) {
     >
       <div className="grid grid-cols-8 gap-2">
         {/*  */}
-        <div className="col-start-1 col-end-6 mx-5 sm:col-start-1 sm:col-span-5 sm:ml-5 sm:mr-0 ">
-          <input
-            className="w-4 h-4 mb-2 mr-3 cursor-pointer sm:h-3 sm:w-3 accent-red-500"
-            type="checkbox"
-            id={list.id}
-            name={list.id}
-            checked={list.isComplete} // enables the isComplete to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
-            onChange={() => {
-              toggleisCompleteHandler(list.id, list.isComplete);
-            }}
-          />
-          <label
-            className={`mx-1 text-xl sm:text-lg 
-            ${list.isComplete ? "line-through text-slate-400" : ""}`}
-            htmlFor={list.id}
-
-            // htmlFor={list.isComplete.toString()}
-            //If we want to write the htmlFor attribute to the DOM with a boolean value, we need to convert it to a string.
-          >
-            {toggleisCompleteMutation.isLoading ? (
-              <>
-                <LoadingSpinner />
-                {list.name}
-              </>
-            ) : (
-              list.name
-            )}
-          </label>
+        <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-5 sm:ml-5 sm:mr-0 ">
+          <div className="flex">
+            <input
+              className="w-4 h-4 mt-2 mr-3 cursor-pointer sm:h-3 sm:w-3 accent-red-500"
+              type="checkbox"
+              id={list.id}
+              name={list.id}
+              checked={list.isComplete} // enables the isComplete to remember the value (true or false), i.e. if it is "true", it will remember and keep that little check mark
+              onChange={() => {
+                toggleisCompleteHandler(list.id, list.isComplete);
+              }}
+            />
+            <label
+              className={`mx-1 text-xl sm:text-lg ${
+                list.isComplete ? "line-through text-slate-400" : ""
+              }`}
+              htmlFor={list.id}
+            >
+              {toggleisCompleteMutation.isLoading ? (
+                <>
+                  <LoadingSpinner />
+                  {list.name}
+                </>
+              ) : (
+                list.name
+              )}
+            </label>
+          </div>
         </div>
 
         <div className="col-span-2 col-end-10 sm:text-xs sm:col-span-3">
@@ -121,9 +121,9 @@ function SingleTodoList({ list }) {
             </div>
           ) : (
             <>
-              <div className="sm:flex sm:justify-end">
+              <div className="sm:flex sm:justify-end ">
                 <button
-                  className="p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2 sm:px-1 sm:p-0"
+                  className=" animate-ping  p-1.5 border-2 rounded-md  hover:bg-green-600 md:ml-2 sm:px-1 sm:p-0"
                   onClick={() => router.push(`/todos/${list.id}`)}
                 >
                   {isLoading ? <LoadingSpinnerButton /> : "Open"}
@@ -131,7 +131,7 @@ function SingleTodoList({ list }) {
               </div>
               <div className="sm:flex sm:justify-end">
                 <button
-                  className="px-2 mx-3 mt-3 mb-3 border-2 rounded-md  hover:bg-amber-400 sm:mx-0 sm:mt-2 sm:mb-2"
+                  className="px-2 mx-3 mt-3 mb-3 border-2 rounded-md hover:bg-amber-400 sm:mx-0 sm:mt-2 sm:mb-2"
                   onClick={() => ListDataFetcher(list)}
                 >
                   {updateListMutation.isLoading ? (
@@ -143,7 +143,7 @@ function SingleTodoList({ list }) {
               </div>
               <div className="sm:flex sm:justify-end">
                 <button
-                  className="px-2 border-2 rounded-md  hover:bg-rose-600"
+                  className="px-2 border-2 rounded-md hover:bg-rose-600"
                   onClick={() => deleteListHandler(list.id)}
                 >
                   {deleteListMutation.isLoading ? (
@@ -178,7 +178,7 @@ function SingleTodoList({ list }) {
 
               <div className="mt-5">
                 <button
-                  className="px-2 mr-1 border-2 rounded-md  hover:bg-amber-400"
+                  className="px-2 mr-1 border-2 rounded-md hover:bg-amber-400"
                   type="submit"
                 >
                   Update

@@ -15,25 +15,30 @@ function FormTodoList() {
 
   function newListHandler(data) {
     //"data" from react-hook-form.
-    const newList = data.newListInput;
+    const newListName = data.newListInput.trim(); // Remove leading and trailing whitespace
 
-    createListMutation.mutateAsync({ listName: newList });
+    if (newListName === "") {
+      reset();
+      return;
+    }
+
+    createListMutation.mutateAsync({ listName: newListName });
 
     reset(); // Reset the form after submission
   }
 
   return (
     <section className="grid grid-cols-6 gap-4 mx-20 sm:mx-5">
-      <div className="col-start-2 col-span-4 sm:col-start-1 sm:col-span-7">
-        <h1 className="text-xl font-bold mb-5">Create your new ToDo List</h1>
+      <div className="col-span-4 col-start-2 sm:col-start-1 sm:col-span-7">
+        <h1 className="mb-5 text-xl font-bold">Create your new ToDo List</h1>
 
         <form
           className="max-w-md mx-auto"
           onSubmit={handleSubmit(newListHandler)}
         >
-          <div className="mt-2 mb-6 flex">
+          <div className="flex mt-2 mb-6">
             <input
-              className="border border-gray-300 font-bold text-slate-800 rounded-md px-3 w-full sm:text-sm"
+              className="w-full px-3 font-bold border border-gray-300 rounded-md text-slate-800 sm:text-sm"
               type="text"
               placeholder="Enter your new todo list"
               maxLength={500}
@@ -42,7 +47,7 @@ function FormTodoList() {
 
             <div>
               <button
-                className="ml-4 p-2 border-2 rounded-md hover:bg-sky-700"
+                className="p-2 ml-4 border-2 rounded-md hover:bg-sky-700"
                 type="submit"
                 disabled={createListMutation.isLoading}
               >
@@ -53,6 +58,13 @@ function FormTodoList() {
                 )}
               </button>
             </div>
+          </div>
+          <div className="mt-3 text-sm italic text-gray-300">
+            {errors.newListInput && (
+              <p>
+                This field is required. <br /> Please enter your Todo List name.
+              </p>
+            )}
           </div>
         </form>
       </div>

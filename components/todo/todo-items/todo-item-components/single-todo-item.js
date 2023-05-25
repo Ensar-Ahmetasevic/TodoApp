@@ -113,7 +113,7 @@ function SingleTodoItem({ item }) {
 
   return (
     <li
-      className={`my-10 py-10 lg:p-0 rounded-lg border-4 border-solid hover:pulse hover:bg-gray-800 
+      className={`my-10 py-5 lg:p-0 rounded-lg border-4 border-solid hover:pulse hover:bg-gray-800 
       ${
         item.isComplete === false
           ? " border-green-600 hover:border-green-400"
@@ -308,7 +308,7 @@ function SingleTodoItem({ item }) {
         {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
 
         {editTodo ? ( // if "editTodo" is null it will no be visible"
-          <section className="grid items-center grid-cols-4 gap-2">
+          <section className="grid items-center grid-cols-4 gap-2 lg:mb-3">
             <div className="col-span-2 col-start-2 lg:col-start-1 lg:col-span-6 lg:mx-4 lg:text-sm">
               <form className="max-w-md mx-auto mt-5 ">
                 <div className="lg:flex">

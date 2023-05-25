@@ -1,9 +1,12 @@
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 import TodoItemMutations from "@/requests/requests-for-todo-items/todo-items-mutations";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 
 function FormTodoItem() {
+  const [errorMessage, setErrorMessage] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -15,16 +18,21 @@ function FormTodoItem() {
 
   function sendTextItemHandler(data) {
     //"data" from react-hook-form
-    const enteredTodo = data.todoInput;
+    const enteredTodo = data.todoInput.trim();
+
+    if (enteredTodo === "") {
+      reset();
+      return;
+    }
 
     createTodoMutation.mutateAsync({ text: enteredTodo, isComplete: false });
     reset(); // Reset the form after submission
   }
 
   return (
-    <section className=" grid grid-cols-6 gap-4 mx-20 sm:mx-5">
-      <div className=" col-start-2 col-span-4 sm:col-start-1 sm:col-span-7">
-        <label className=" text-xl font-bold mb-5">
+    <section className="grid grid-cols-6 gap-4 mx-20 sm:mx-5">
+      <div className="col-span-4 col-start-2 sm:col-start-1 sm:col-span-7">
+        <label className="mb-5 text-xl font-bold ">
           Please enter your ToDo`s
         </label>
         <form
@@ -33,7 +41,7 @@ function FormTodoItem() {
         >
           <div className="flex sm:flex-col">
             <textarea
-              className="w-full bg-transparent px-3 py-3 text-slate-100 rounded-md sm:text-sm  border border-r-4 border-l-4 border-gray-500 focus:ring-1 focus:r-ring-gray-500 focus:outline-none"
+              className="w-full px-3 py-3 bg-transparent border border-l-4 border-r-4 border-gray-500 rounded-md text-slate-100 sm:text-sm focus:ring-1 focus:r-ring-gray-500 focus:outline-none"
               style={{
                 maxHeight: "200px",
                 height: "120px",
@@ -46,7 +54,7 @@ function FormTodoItem() {
 
             <div>
               <button
-                className="ml-4 p-2 sm:ml-0 mt-9 sm:mt-4 border-2 rounded-md hover:bg-sky-700"
+                className="p-2 ml-4 border-2 rounded-md sm:ml-0 mt-9 sm:mt-4 hover:bg-sky-700"
                 type="submit"
                 disabled={createTodoMutation.isLoading}
               >
@@ -59,8 +67,12 @@ function FormTodoItem() {
             </div>
           </div>
 
-          <div className="italic text-gray-300 text-sm mt-3">
-            {errors.todoInput && <p> This field is required </p>}
+          <div className="mt-3 text-sm italic text-gray-300">
+            {errors.todoInput && (
+              <p>
+                This field is required. <br /> Pleas enter your Todo Item.
+              </p>
+            )}
           </div>
         </form>
       </div>
