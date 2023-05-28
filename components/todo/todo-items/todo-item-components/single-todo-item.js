@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useS3Upload } from "next-s3-upload";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -15,12 +16,17 @@ import TodoItemMutations from "@/requests/requests-for-todo-items/todo-items-mut
 
 function SingleTodoItem({ item }) {
   //
-  const [editTodo, setEditTodo] = useState(null);
+  const [toggleUpdateButttom, setToggleUpdateButttom] = useState(false);
   const [toggleAddFileButttom, setToggleAddFileButttom] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [slideIndex, setSlideIndex] = useState(0);
 
   const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const [imageUrl, setImageUrl] = useState();
   const { uploadToS3 } = useS3Upload();
@@ -40,19 +46,18 @@ function SingleTodoItem({ item }) {
 
   // TODO ITEM MUTATIOS:
 
-  function updateItemHandler(item) {
-    setEditTodo(item);
-  }
-
-  function updateTodoItem(id, text) {
+  function updateItemHandler(data) {
+    // data from react-hook-form
+    const text = data.text;
+    const id = item.id;
     updateTodoMutation.mutateAsync({ id, text });
-    setEditTodo(null);
+    setToggleUpdateButttom(false);
   }
 
   function toggleisCompleteHandler(id, isComplete) {
     toggleisCompleteMutation.mutateAsync({ id, isComplete: !isComplete });
     setToggleAddFileButttom(true);
-    setEditTodo(null);
+    setToggleUpdateButttom(false);
   }
 
   function deleteItemHandler(id) {
@@ -90,6 +95,7 @@ function SingleTodoItem({ item }) {
       fileInput.value = null;
     }
   }
+
   return (
     <li
       className={`my-10 py-5 lg:p-0 rounded-lg border-4 border-solid hover:pulse hover:bg-gray-800 
@@ -154,7 +160,7 @@ function SingleTodoItem({ item }) {
               <>
                 <button
                   className="px-1 border-2 rounded-md hover:bg-amber-400"
-                  onClick={() => updateItemHandler(item)}
+                  onClick={() => setToggleUpdateButttom(true)}
                 >
                   {updateTodoMutation.isLoading ? (
                     <LoadingSpinnerButton />
@@ -278,10 +284,13 @@ function SingleTodoItem({ item }) {
       <div>
         {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
 
-        {editTodo ? ( // if "editTodo" is null it will no be visible"
+        {toggleUpdateButttom ? ( // if "toggleUpdateButttom" is true it will no be visible"
           <section className="grid items-center grid-cols-4 gap-2 lg:mb-3">
             <div className="col-span-2 col-start-2 lg:col-start-1 lg:col-span-6 lg:mx-4 lg:text-sm">
-              <form className="max-w-md mx-auto mt-5 ">
+              <form
+                className="max-w-md mx-auto mt-5 "
+                onSubmit={handleSubmit(updateItemHandler)}
+              >
                 <div className="lg:flex">
                   <textarea
                     className="w-full px-3 py-3 bg-transparent border border-l-4 border-r-4 border-gray-500 rounded-md text-slate-100 lg:text-sm focus:ring-1 focus:r-ring-gray-500 focus:outline-none"
@@ -290,26 +299,22 @@ function SingleTodoItem({ item }) {
                       height: "120px",
                       overflow: "hidden",
                     }}
-                    value={editTodo.text}
-                    onChange={(event) =>
-                      setEditTodo({
-                        ...editTodo,
-                        text: event.target.value,
-                      })
-                    }
+                    defaultValue={item.text}
+                    {...register("text")}
+                    // "defaultValu" + "new entered text" using the registered field named "name" we can access that value
                   />
                 </div>
 
                 <div className="flex justify-center mt-5 ">
                   <button
                     className="px-1 mr-1 border-2 rounded-md hover:bg-amber-400"
-                    onClick={() => updateTodoItem(editTodo.id, editTodo.text)}
+                    type="submit"
                   >
                     Update
                   </button>
                   <button
                     className="px-1 ml-2 border-2 rounded-md hover:bg-slate-500"
-                    onClick={() => setEditTodo(null)}
+                    onClick={() => setToggleUpdateButttom(false)}
                   >
                     Cancel
                   </button>
@@ -317,7 +322,9 @@ function SingleTodoItem({ item }) {
               </form>
             </div>
           </section>
-        ) : null}
+        ) : (
+          false
+        )}
       </div>
     </li>
   );

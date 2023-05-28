@@ -9,7 +9,7 @@ import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 
 function SingleTodoList({ list }) {
-  const [listData, setListData] = useState(null);
+  const [listData, setListData] = useState(false);
 
   const router = useRouter();
 
@@ -23,22 +23,18 @@ function SingleTodoList({ list }) {
   const { updateListMutation, toggleisCompleteMutation, deleteListMutation } =
     TodoListMutations();
 
-  function ListDataFetcher(list) {
-    setListData(list);
-  }
-
   const updateListHandler = (data) => {
     // data from react-hook-form
     const name = data.name;
-    const id = listData.id;
+    const id = list.id;
 
     updateListMutation.mutateAsync({ id, name });
-    setListData(null);
+    setListData(false);
   };
 
   function toggleisCompleteHandler(id, isComplete) {
     toggleisCompleteMutation.mutateAsync({ id, isComplete: !isComplete });
-    setListData(null);
+    setListData(false);
   }
 
   function deleteListHandler(id) {
@@ -132,7 +128,7 @@ function SingleTodoList({ list }) {
               <div className="sm:flex sm:justify-end">
                 <button
                   className="px-2 mx-3 mt-3 mb-3 border-2 rounded-md hover:bg-amber-400 sm:mx-0 sm:mt-2 sm:mb-2"
-                  onClick={() => ListDataFetcher(list)}
+                  onClick={() => setListData(true)}
                 >
                   {updateListMutation.isLoading ? (
                     <LoadingSpinnerButton />
@@ -159,7 +155,7 @@ function SingleTodoList({ list }) {
       </div>
 
       {/* Add an input field for editing the todo item and make it visible only when an item is being edited.*/}
-      {listData ? ( // if "listData" is null it will no be visible"
+      {listData ? ( // if "listData" is true it will no be visible"
         <section className="grid grid-cols-6 gap-4">
           <div className="col-span-4 col-start-2 sm:col-start-1 sm:col-span-6 sm:mx-4 ">
             <form
@@ -170,9 +166,9 @@ function SingleTodoList({ list }) {
                 <input
                   className="w-full p-2 font-bold border border-gray-300 rounded-md text-slate-800 sm:text-sm"
                   type="text"
-                  defaultValue={listData.name}
+                  defaultValue={list.name}
                   {...register("name")}
-                  // defaultValu + entered text we can access that value using the registered field named "name".
+                  // "defaultValu" + "new entered list name" using the registered field named "name" we can access that value (data.name)
                 />
               </div>
 
@@ -185,7 +181,7 @@ function SingleTodoList({ list }) {
                 </button>
                 <button
                   className="px-2 ml-1 border-2 rounded-md hover:bg-slate-500"
-                  onClick={() => setListData(null)}
+                  onClick={() => setListData(false)}
                 >
                   Cancel
                 </button>
@@ -193,7 +189,9 @@ function SingleTodoList({ list }) {
             </form>
           </div>
         </section>
-      ) : null}
+      ) : (
+        false
+      )}
     </li>
   );
 }
