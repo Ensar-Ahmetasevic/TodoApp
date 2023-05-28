@@ -16,13 +16,8 @@ import TodoItemMutations from "@/requests/requests-for-todo-items/todo-items-mut
 function SingleTodoItem({ item }) {
   //
   const [editTodo, setEditTodo] = useState(null);
-  const [deletingItemId, setDeletingItemId] = useState(null);
-  const [updateItemId, setUpdateItemId] = useState(null);
-  const [addFileItemID, setAddFileItemID] = useState(null);
-  const [showFile, setShowFile] = useState(false);
-  const [addFile, setAddFile] = useState(true);
+  const [toggleAddFileButttom, setToggleAddFileButttom] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
-
   const [slideIndex, setSlideIndex] = useState(0);
 
   const router = useRouter();
@@ -38,8 +33,7 @@ function SingleTodoItem({ item }) {
     slidesToScroll: 1,
     beforeChange: (current, next) => setSlideIndex(next),
   };
-
-  const { data: URLdata } = AwsUrlQuery(addFileItemID);
+  const { data: URLdata } = AwsUrlQuery(item.id);
   const { createURLMutation, deleteURLMutation } = AwsUrlMutations();
   const { updateTodoMutation, toggleisCompleteMutation, deleteTodoMutation } =
     TodoItemMutations();
@@ -51,32 +45,22 @@ function SingleTodoItem({ item }) {
   }
 
   function updateTodoItem(id, text) {
-    setUpdateItemId(id);
     updateTodoMutation.mutateAsync({ id, text });
     setEditTodo(null);
   }
 
   function toggleisCompleteHandler(id, isComplete) {
     toggleisCompleteMutation.mutateAsync({ id, isComplete: !isComplete });
-    setAddFile(true);
-    setShowFile(false);
+    setToggleAddFileButttom(true);
     setEditTodo(null);
   }
 
   function deleteItemHandler(id) {
-    setDeletingItemId(id);
     deleteTodoMutation.mutateAsync(id);
-    setAddFile(true);
-    setShowFile(false);
+    setToggleAddFileButttom(true);
   }
 
   // AWS URL MUTATIOS:
-
-  function addFileHandler(itemID) {
-    setAddFileItemID(itemID);
-    setAddFile(!addFile);
-    setShowFile(false);
-  }
 
   async function deleteURLHandler(URLid) {
     await deleteURLMutation.mutateAsync(URLid);
@@ -106,11 +90,6 @@ function SingleTodoItem({ item }) {
       fileInput.value = null;
     }
   }
-
-  function showFiles() {
-    setShowFile(!showFile);
-  }
-
   return (
     <li
       className={`my-10 py-5 lg:p-0 rounded-lg border-4 border-solid hover:pulse hover:bg-gray-800 
@@ -197,14 +176,20 @@ function SingleTodoItem({ item }) {
 
                 <button
                   className={` px-2 border-2 rounded-md ${
-                    addFile ? "hover:bg-green-600" : "hover:bg-slate-500"
+                    toggleAddFileButttom
+                      ? "hover:bg-green-600"
+                      : "hover:bg-slate-500"
                   }`}
-                  onClick={() => addFileHandler(item.id)}
+                  onClick={() => setToggleAddFileButttom(!toggleAddFileButttom)}
                 >
-                  {addFile ? "Add File" : "Cancel"}
+                  {toggleAddFileButttom
+                    ? !URLdata?.url?.length
+                      ? "Add File"
+                      : "Show Files"
+                    : "Close"}
                 </button>
 
-                {!addFile && (
+                {!toggleAddFileButttom && (
                   <div className="ml-2 lg:ml-0 ">
                     <div className="lg:ml-5">
                       <input
@@ -219,7 +204,6 @@ function SingleTodoItem({ item }) {
                     <div>
                       <button
                         className="px-2 border-2 rounded-md hover:bg-sky-700"
-                        type="submit"
                         onClick={() => saveFilesChange(item.id)}
                       >
                         {createURLMutation.isLoading ? (
@@ -229,19 +213,6 @@ function SingleTodoItem({ item }) {
                         )}
                       </button>
                     </div>
-
-                    <div>
-                      <button
-                        className={`ml-2 px-2 border-2 rounded-md lg:px-1 lg: mt-2 ${
-                          !showFile
-                            ? "hover:bg-green-600"
-                            : "hover:bg-slate-500"
-                        }`}
-                        onClick={() => showFiles()}
-                      >
-                        {showFile ? "Hide My Files" : "Show My Files"}
-                      </button>
-                    </div>
                   </div>
                 )}
               </>
@@ -249,10 +220,10 @@ function SingleTodoItem({ item }) {
 
             <div className="col-span-3 col-end-9 ">
               <>
-                {showFile && URLdata?.url?.length ? (
-                  // if the ShowFile === false and if the URL array is not empty
+                {!toggleAddFileButttom && URLdata?.url?.length ? (
+                  // if toggleAddFileButttom === false and if the URL array is not empty
                   <div className="mt-10">
-                    <h2>{`Yor number of files: ${URLdata.url.length}`}</h2>
+                    <h2>{`Number of files: ${URLdata.url.length}`}</h2>
                     <p>Please scroll to the side</p>
                     <input
                       onChange={(e) => setSlideIndex(e.target.value)}
