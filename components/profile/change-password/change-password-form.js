@@ -1,12 +1,13 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import { UserProfileMutations } from "@/requests/requests-for-user-profile/user-profile-mutations";
 
-function ProfileForm({ onChangePassword }) {
+function ChangePasswordForm() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showOldPassword, setShowOldPassword] = useState(false);
 
-  const { isLoading } = onChangePassword;
+  const { changePasswordMutation } = UserProfileMutations();
 
   const {
     register,
@@ -20,9 +21,7 @@ function ProfileForm({ onChangePassword }) {
     const enteredNewPassword = data.newPassword;
 
     try {
-      await onChangePassword.mutate({
-        // ".mutate" is necessary to trigger the mutation.
-        // Await the API call
+      await changePasswordMutation.mutateAsync({
         oldPassword: enteredOldPassword,
         newPassword: enteredNewPassword,
       });
@@ -92,11 +91,15 @@ function ProfileForm({ onChangePassword }) {
           className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out"
           type="submit"
         >
-          {isLoading ? <LoadingSpinnerButton /> : "Change Password"}
+          {changePasswordMutation.isLoading ? (
+            <LoadingSpinnerButton />
+          ) : (
+            "Change Password"
+          )}
         </button>
       </div>
     </form>
   );
 }
 
-export default ProfileForm;
+export default ChangePasswordForm;

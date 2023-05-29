@@ -1,12 +1,9 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 
 import TodoItemMutations from "@/requests/requests-for-todo-items/todo-items-mutations";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 
 function FormTodoItem() {
-  const [errorMessage, setErrorMessage] = useState("");
-
   const {
     register,
     handleSubmit,
