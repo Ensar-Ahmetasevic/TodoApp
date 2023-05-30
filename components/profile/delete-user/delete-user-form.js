@@ -38,19 +38,19 @@ function DeleteUSerForm() {
       onSubmit={handleSubmit(submitHandler)}
     >
       <div className="mb-4 relative">
-        <label htmlFor="password" className="block font-semibold mb-1">
+        <label htmlFor="password" className="block font-semibold mb-3">
           Enter Password
         </label>
 
         <input
-          className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full  pr-12"
+          className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 pr-12 w-full "
           id="password"
           type={showPassword ? "text" : "password"}
           {...register("password", { required: true })}
         />
 
         <button
-          className="absolute top-9 right-2 mr-1 mt-1 text-xs text-gray-400 hover:text-gray-800 hover:font-bold"
+          className="absolute top-11 right-2 mr-1 mt-1 text-xs text-gray-400 hover:text-gray-800 hover:font-bold"
           type="button"
           onClick={toggleHideShowPassword}
         >
@@ -68,11 +68,7 @@ function DeleteUSerForm() {
           type="submit"
           disabled={isSubmitting}
         >
-          {deleteUserMutation.isLoading ? (
-            <LoadingSpinnerButton />
-          ) : (
-            "Delete User"
-          )}
+          {deleteUserMutation.isLoading ? <LoadingSpinnerButton /> : "Delete"}
         </button>
       </div>
     </form>

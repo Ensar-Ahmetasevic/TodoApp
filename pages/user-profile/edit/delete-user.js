@@ -6,7 +6,7 @@ function DeleteUSer() {
   return (
     <Layout>
       <section>
-        <h1 className="text-3xl text-center font-bold mb-8 sm:text-2xl">
+        <h1 className="text-3xl text-center font-bold mb-8 sm:text-2xl mt-20">
           Delete Account
         </h1>
         <DeleteUSerForm />
