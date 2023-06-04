@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import { UserProfileMutations } from "@/requests/requests-for-user-profile/user-profile-mutations";
+import Link from "next/link";
 
 function DeleteUSerForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -64,12 +65,19 @@ function DeleteUSerForm() {
 
       <div className="flex justify-end">
         <button
-          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out"
+          className="bg-red-600 hover:bg-red-700  text-white py-2 px-4 rounded-md"
           type="submit"
           disabled={isSubmitting}
         >
           {deleteUserMutation.isLoading ? <LoadingSpinnerButton /> : "Delete"}
         </button>
+        <Link
+          className="border-2 border-white hover:bg-slate-500 ml-3 text-white py-2 px-4 rounded-md"
+          href={".."}
+        >
+          {" "}
+          Cancel{" "}
+        </Link>
       </div>
     </form>
   );
