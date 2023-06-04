@@ -25,13 +25,14 @@ export function authMutations() {
             Automatically updates the cached data with the new data, this ensures that the list of users
             displayed in the UI is always showing the latest data.
         */
-        toast.success("User created successfully.", { autoClose: 700 });
-        setTimeout(() => {
-          toast.info("Use your Email and Password to Login", {
-            position: "bottom-center",
-            autoClose: 7000,
-          });
-        }, 2000);
+        toast.success("User created successfully.", { autoClose: 1500 });
+
+        // setTimeout(() => {
+        //   toast.info("Use your Email and Password to Login", {
+        //     position: "bottom-center",
+        //     autoClose: 7000,
+        //   });
+        // }, 2000);
       },
     }
   );

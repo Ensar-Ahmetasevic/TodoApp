@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { signIn } from "next-auth/client";
 
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import { authMutations } from "@/requests/requests-for-auth/auth-mutations";
@@ -28,10 +29,22 @@ function SignupForm() {
         email: enteredEmail,
         password: enteredPassword,
       });
+
+      // When user is created, the user automatically sign in and redirected to the Todo Lists page
       // If the user creation is successful
       if (result.status) {
-        // Redirect the user to the home page
-        router.replace("/auth/login");
+        const singInResult = await signIn("credentials", {
+          redirect: false,
+          email: enteredEmail,
+          password: enteredPassword,
+        });
+
+        if (!singInResult.error) {
+          // If there are no errors (!result.error is true), the user is redirected
+          router.replace(`/todos/todo-lists`);
+        } else {
+          toast.error(result.error);
+        }
       } else {
         toast.error(result.message);
       }
