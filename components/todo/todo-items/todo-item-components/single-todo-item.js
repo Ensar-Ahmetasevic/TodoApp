@@ -144,7 +144,7 @@ function SingleTodoItem({ item }) {
         </div>
 
         <div className="col-span-1 lg:col-span-3">
-          <div className="py-2 mt-10 mr-3 border-2 border-gray-500 border-solid rounded-lg hover:border-gray-100 lg:border-0 lg:mr-2 lg:ml-0 lg:mt-0">
+          <div className="py-2 mt-10 mr-3 sm:mr-0 border-2 border-gray-500 border-solid rounded-lg hover:border-gray-100 lg:border-0  lg:ml-0 lg:mt-0">
             {item.isComplete ? (
               <button
                 className="px-2 my-2 border-2 rounded-md hover:bg-rose-600"

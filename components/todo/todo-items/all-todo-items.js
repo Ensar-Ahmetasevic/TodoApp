@@ -27,10 +27,10 @@ function AllTodoItems() {
   return (
     <section className=" grid grid-cols-6 gap-4 mx-20 sm:mx-5">
       <div className=" col-start-2 col-span-4 sm:col-start-1 sm:col-span-7">
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between mt-10">
           <div className="flex flex-col ">
             <button
-              className="py-1 px-2 ml-5 rounded-lg border-2 border-solid border-yellow-400 hover:border-yellow-600"
+              className="py-1 px-2 ml-5 sm:ml-0 rounded-lg border-2 border-solid border-yellow-400 hover:border-yellow-600"
               onClick={() => router.push("/todos/todo-lists")}
             >
               {listName}
@@ -39,7 +39,7 @@ function AllTodoItems() {
           <div>
             <p></p>
             <button
-              className="py-1 px-2 mr-5 rounded-lg border-2 border-solid border-gray-500 hover:border-gray-300"
+              className="py-1 px-2 mr-5 sm:mr-0 rounded-lg border-2 border-solid border-gray-500 hover:border-gray-300"
               onClick={() => router.push("/todos/todo-lists")}
             >
               Back
