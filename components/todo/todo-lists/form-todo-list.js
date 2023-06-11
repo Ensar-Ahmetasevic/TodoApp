@@ -24,7 +24,7 @@ function FormTodoList() {
 
     createTodoListMutation.mutateAsync({ listName: newListName });
 
-    reset(); // Reset the form after submission
+    reset(); // Reset the form after submission.
   }
 
   return (
