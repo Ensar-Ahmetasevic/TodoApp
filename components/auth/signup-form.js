@@ -6,7 +6,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/client";
 
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import UseSignupAuthMutation from "@/requests/requests-for-auth/use-signUp-auth-mutation";
+import UseSignupAuthMutation from "@/requests/requests-for-auth/use-signup-auth-mutation";
 
 function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
