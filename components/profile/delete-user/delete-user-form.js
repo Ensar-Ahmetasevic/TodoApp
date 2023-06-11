@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import { UserProfileMutations } from "@/requests/requests-for-user-profile/user-profile-mutations";
 import Link from "next/link";
+
+import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import useDeleteUserMutation from "@/requests/requests-for-user-profile/use-delete-user-mutation";
 
 function DeleteUSerForm() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { deleteUserMutation } = UserProfileMutations();
+  const deleteUserMutation = useDeleteUserMutation();
 
   const {
     register,

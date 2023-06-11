@@ -3,10 +3,13 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 
-import TodoListQuery from "../../../../requests/requests-for-todo-lists/todo-list-query";
-import TodoListMutations from "../../../../requests/requests-for-todo-lists/todo-list-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+
+import TodoListQuery from "../../../../requests/requests-for-todo-lists/todo-list-query";
+import useDeleteTodoListMutations from "@/requests/requests-for-todo-lists/use-delete-todo-list-mutation";
+import useIsCompletedTodoListMutation from "@/requests/requests-for-todo-lists/use-isCompleted-todo-list-mutation";
+import useUpdateTodoListMutation from "@/requests/requests-for-todo-lists/use-update-todo-list-mutation";
 
 function SingleTodoList({ list }) {
   const [listData, setListData] = useState(false);
@@ -20,25 +23,27 @@ function SingleTodoList({ list }) {
   } = useForm();
 
   const { isLoading } = TodoListQuery();
-  const { updateListMutation, toggleisCompleteMutation, deleteListMutation } =
-    TodoListMutations();
+
+  const deleteTodoListMutations = useDeleteTodoListMutations();
+  const isCompletedTodoListMutation = useIsCompletedTodoListMutation();
+  const updateTodoListMutation = useUpdateTodoListMutation();
 
   const updateListHandler = (data) => {
     // data from react-hook-form
     const name = data.name;
     const id = list.id;
 
-    updateListMutation.mutateAsync({ id, name });
+    updateTodoListMutation.mutateAsync({ id, name });
     setListData(false);
   };
 
   function toggleisCompleteHandler(id, isComplete) {
-    toggleisCompleteMutation.mutateAsync({ id, isComplete: !isComplete });
+    isCompletedTodoListMutation.mutateAsync({ id, isComplete: !isComplete });
     setListData(false);
   }
 
   function deleteListHandler(id) {
-    deleteListMutation.mutateAsync(id);
+    deleteTodoListMutations.mutateAsync(id);
   }
 
   return (
@@ -70,7 +75,7 @@ function SingleTodoList({ list }) {
               }`}
               htmlFor={list.id}
             >
-              {toggleisCompleteMutation.isLoading ? (
+              {isCompletedTodoListMutation.isLoading ? (
                 <>
                   <LoadingSpinner />
                   {list.name}
@@ -108,7 +113,7 @@ function SingleTodoList({ list }) {
                 className="px-2 border-2 rounded-md hover:bg-rose-600"
                 onClick={() => deleteListHandler(list.id)}
               >
-                {deleteListMutation.isLoading ? (
+                {deleteTodoListMutations.isLoading ? (
                   <LoadingSpinnerButton />
                 ) : (
                   "Delete"
@@ -130,7 +135,7 @@ function SingleTodoList({ list }) {
                   className="px-2 mx-3 mt-3 mb-3 border-2 rounded-md hover:bg-amber-400 sm:mx-0 sm:mt-2 sm:mb-2"
                   onClick={() => setListData(true)}
                 >
-                  {updateListMutation.isLoading ? (
+                  {updateTodoListMutation.isLoading ? (
                     <LoadingSpinnerButton />
                   ) : (
                     "Update"
@@ -142,7 +147,7 @@ function SingleTodoList({ list }) {
                   className="px-2 border-2 rounded-md hover:bg-rose-600"
                   onClick={() => deleteListHandler(list.id)}
                 >
-                  {deleteListMutation.isLoading ? (
+                  {deleteTodoListMutations.isLoading ? (
                     <LoadingSpinnerButton />
                   ) : (
                     "Delete"

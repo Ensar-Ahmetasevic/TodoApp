@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 
-import TodoItemMutations from "@/requests/requests-for-todo-items/todo-items-mutations";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import useCreateTodoItemMutation from "@/requests/requests-for-todo-items/use-create-todo-item-mutation";
 
 function FormTodoItem() {
   const {
@@ -11,7 +11,7 @@ function FormTodoItem() {
     formState: { errors },
   } = useForm();
 
-  const { createTodoMutation } = TodoItemMutations();
+  const createTodoItemMutation = useCreateTodoItemMutation();
 
   function sendTextItemHandler(data) {
     //"data" from react-hook-form
@@ -22,7 +22,10 @@ function FormTodoItem() {
       return;
     }
 
-    createTodoMutation.mutateAsync({ text: enteredTodo, isComplete: false });
+    createTodoItemMutation.mutateAsync({
+      text: enteredTodo,
+      isComplete: false,
+    });
     reset(); // Reset the form after submission
   }
 
@@ -42,7 +45,7 @@ function FormTodoItem() {
               style={{
                 maxHeight: "200px",
                 height: "120px",
-                overflow: "hidden",
+                overflow: "auto",
               }}
               placeholder="Enter your new todo ..."
               maxLength={1000}
@@ -53,9 +56,9 @@ function FormTodoItem() {
               <button
                 className="p-2 ml-4 border-2 rounded-md sm:ml-0 mt-9 sm:mt-4 hover:bg-sky-700"
                 type="submit"
-                disabled={createTodoMutation.isLoading}
+                disabled={createTodoItemMutation.isLoading}
               >
-                {createTodoMutation.isLoading ? (
+                {createTodoItemMutation.isLoading ? (
                   <LoadingSpinnerButton />
                 ) : (
                   "Add"

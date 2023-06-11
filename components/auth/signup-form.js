@@ -6,7 +6,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/client";
 
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import { authMutations } from "@/requests/requests-for-auth/auth-mutations";
+import UseSignupAuthMutation from "@/requests/requests-for-auth/use-signUp-auth-mutation";
 
 function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,14 +18,14 @@ function SignupForm() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const { createUser } = authMutations();
+  const signupAuthMutation = UseSignupAuthMutation();
 
   async function submitHandler(data) {
     const enteredEmail = data.emailInput;
     const enteredPassword = data.passwordInput;
 
     try {
-      const result = await createUser.mutateAsync({
+      const result = await signupAuthMutation.mutateAsync({
         email: enteredEmail,
         password: enteredPassword,
       });

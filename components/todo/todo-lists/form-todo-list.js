@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
 
-import TodoListMutations from "../../../requests/requests-for-todo-lists/todo-list-mutations";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import useCreateTodoListMutation from "@/requests/requests-for-todo-lists/use-create-todo-list-mutation";
 
 function FormTodoList() {
-  const { createListMutation } = TodoListMutations();
+  const createTodoListMutation = useCreateTodoListMutation();
 
   const {
     register,
@@ -22,7 +22,7 @@ function FormTodoList() {
       return;
     }
 
-    createListMutation.mutateAsync({ listName: newListName });
+    createTodoListMutation.mutateAsync({ listName: newListName });
 
     reset(); // Reset the form after submission
   }
@@ -49,9 +49,9 @@ function FormTodoList() {
               <button
                 className="p-2 ml-4 border-2 rounded-md hover:bg-sky-700"
                 type="submit"
-                disabled={createListMutation.isLoading}
+                disabled={createTodoListMutation.isLoading}
               >
-                {createListMutation.isLoading ? (
+                {createTodoListMutation.isLoading ? (
                   <LoadingSpinnerButton />
                 ) : (
                   "Add"

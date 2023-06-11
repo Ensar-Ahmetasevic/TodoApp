@@ -1,14 +1,15 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import { UserProfileMutations } from "@/requests/requests-for-user-profile/user-profile-mutations";
 import Link from "next/link";
+
+import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import useChangePasswordMutation from "@/requests/requests-for-user-profile/use-change-password-mutation";
 
 function ChangePasswordForm() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showOldPassword, setShowOldPassword] = useState(false);
 
-  const { changePasswordMutation } = UserProfileMutations();
+  const changePasswordMutation = useChangePasswordMutation();
 
   const {
     register,

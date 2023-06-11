@@ -8,11 +8,16 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import AwsUrlQuery from "../../../../requests/requests-for-aws-url/url-react-query";
-import AwsUrlMutations from "../../../../requests/requests-for-aws-url/url-mutations";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import TodoItemMutations from "@/requests/requests-for-todo-items/todo-items-mutations";
+
+import AwsUrlQuery from "../../../../requests/requests-for-aws-url/url-react-query";
+
+import useDeleteTodoItemMutation from "@/requests/requests-for-todo-items/use-delete-todo-item-mutation";
+import useIsCompletedTodoItemMutation from "@/requests/requests-for-todo-items/use-isCompleted-todo-item-mutation";
+import useUpdateTodoItemMutation from "@/requests/requests-for-todo-items/use-update-todo-item-mutation";
+import useCreateAwsUrlMutation from "@/requests/requests-for-aws-url/use-create-aws-url-mutation";
+import useDeleteAwsUrlMutation from "@/requests/requests-for-aws-url/use-delete-aws-url-mutation";
 
 function SingleTodoItem({ item }) {
   //
@@ -39,10 +44,14 @@ function SingleTodoItem({ item }) {
     slidesToScroll: 1,
     beforeChange: (current, next) => setSlideIndex(next),
   };
+
   const { data: URLdata } = AwsUrlQuery(item.id);
-  const { createURLMutation, deleteURLMutation } = AwsUrlMutations();
-  const { updateTodoMutation, toggleisCompleteMutation, deleteTodoMutation } =
-    TodoItemMutations();
+
+  const deleteAwsUrlMutation = useDeleteAwsUrlMutation();
+  const createAwsUrlMutation = useCreateAwsUrlMutation();
+  const deleteTodoItemMutation = useDeleteTodoItemMutation();
+  const isCompletedTodoItemMutation = useIsCompletedTodoItemMutation();
+  const updateTodoItemMutation = useUpdateTodoItemMutation();
 
   // TODO ITEM MUTATIOS:
 
@@ -50,25 +59,26 @@ function SingleTodoItem({ item }) {
     // data from react-hook-form
     const text = data.text;
     const id = item.id;
-    updateTodoMutation.mutateAsync({ id, text });
+    updateTodoItemMutation.mutateAsync({ id, text });
     setToggleUpdateButttom(false);
   }
 
   function toggleisCompleteHandler(id, isComplete) {
-    toggleisCompleteMutation.mutateAsync({ id, isComplete: !isComplete });
+    isCompletedTodoItemMutation.mutateAsync({ id, isComplete: !isComplete });
     setToggleAddFileButttom(true);
     setToggleUpdateButttom(false);
   }
 
   function deleteItemHandler(id) {
-    deleteTodoMutation.mutateAsync(id);
+    deleteTodoItemMutation.mutateAsync(id);
+
     setToggleAddFileButttom(true);
   }
 
   // AWS URL MUTATIOS:
 
   async function deleteURLHandler(URLid) {
-    await deleteURLMutation.mutateAsync(URLid);
+    await deleteAwsUrlMutation.mutateAsync(URLid);
   }
 
   const handleFilesChange = async (e) => {
@@ -85,7 +95,7 @@ function SingleTodoItem({ item }) {
 
     // Check if a file was selected
     if (selectedFile !== null) {
-      await createURLMutation.mutateAsync({ url, todoID });
+      await createAwsUrlMutation.mutateAsync({ url, todoID });
 
       // Clear the selected file
       setSelectedFile(null);
@@ -131,7 +141,7 @@ function SingleTodoItem({ item }) {
               style={{ whiteSpace: "pre-wrap" }}
               htmlFor={item.id}
             >
-              {toggleisCompleteMutation.isLoading ? (
+              {isCompletedTodoItemMutation.isLoading ? (
                 <>
                   <LoadingSpinner />
                   {item.text}
@@ -150,7 +160,7 @@ function SingleTodoItem({ item }) {
                 className="px-2 my-2 border-2 rounded-md hover:bg-rose-600"
                 onClick={() => deleteItemHandler(item.id)}
               >
-                {deleteTodoMutation.isLoading ? (
+                {deleteTodoItemMutation.isLoading ? (
                   <LoadingSpinnerButton />
                 ) : (
                   "Delete"
@@ -162,7 +172,7 @@ function SingleTodoItem({ item }) {
                   className="px-1 border-2 rounded-md hover:bg-amber-400"
                   onClick={() => setToggleUpdateButttom(true)}
                 >
-                  {updateTodoMutation.isLoading ? (
+                  {updateTodoItemMutation.isLoading ? (
                     <LoadingSpinnerButton />
                   ) : (
                     "Update"
@@ -173,7 +183,7 @@ function SingleTodoItem({ item }) {
                   className="px-2 mx-2 my-2 border-2 rounded-md hover:bg-rose-600"
                   onClick={() => deleteItemHandler(item.id)}
                 >
-                  {deleteTodoMutation.isLoading ? (
+                  {deleteTodoItemMutation.isLoading ? (
                     <LoadingSpinnerButton />
                   ) : (
                     "Delete"
@@ -212,7 +222,7 @@ function SingleTodoItem({ item }) {
                         className="px-2 border-2 rounded-md hover:bg-sky-700"
                         onClick={() => saveFilesChange(item.id)}
                       >
-                        {createURLMutation.isLoading ? (
+                        {createAwsUrlMutation.isLoading ? (
                           <LoadingSpinnerButton />
                         ) : (
                           "Save"
@@ -264,7 +274,7 @@ function SingleTodoItem({ item }) {
                               className="px-1 border-2 rounded-md hover:bg-rose-600"
                               onClick={() => deleteURLHandler(file.id)}
                             >
-                              {deleteURLMutation.isLoading ? (
+                              {deleteAwsUrlMutation.isLoading ? (
                                 <LoadingSpinnerButton />
                               ) : (
                                 "Delete"
