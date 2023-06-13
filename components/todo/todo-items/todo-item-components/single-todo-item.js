@@ -60,6 +60,13 @@ function SingleTodoItem({ item }) {
     // data from react-hook-form
     const text = data.text;
     const id = item.id;
+
+    if (!/.*\S+.*/.test(text)) {
+      //hecks if the input "name" contains at empty space
+      reset();
+      return;
+    }
+
     updateTodoItemMutation.mutateAsync({ id, text });
     setToggleUpdateButttom(false);
   }
@@ -308,7 +315,7 @@ function SingleTodoItem({ item }) {
                     style={{
                       maxHeight: "200px",
                       height: "120px",
-                      overflow: "hidden",
+                      overflow: "auto",
                     }}
                     defaultValue={item.text}
                     {...register("text")}
