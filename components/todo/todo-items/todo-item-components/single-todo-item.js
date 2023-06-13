@@ -30,6 +30,7 @@ function SingleTodoItem({ item }) {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -324,7 +325,10 @@ function SingleTodoItem({ item }) {
                   </button>
                   <button
                     className="px-1 ml-2 border-2 rounded-md hover:bg-slate-500"
-                    onClick={() => setToggleUpdateButttom(false)}
+                    onClick={() => {
+                      setToggleUpdateButttom(false);
+                      reset();
+                    }}
                   >
                     Cancel
                   </button>

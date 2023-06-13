@@ -21,11 +21,7 @@ function SingleTodoList({ list }) {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: list.name, // Set the default value of the input field to the current list name
-    },
-  });
+  } = useForm();
 
   const { isLoading } = useTodoListQuery();
 
@@ -38,8 +34,10 @@ function SingleTodoList({ list }) {
     const name = data.name.trim();
     const id = list.id;
 
-    if (name === "") {
+    if (!/.*\S+.*/.test(name)) {
+      //hecks if the input "name" contains at empty space
       reset();
+      return;
     }
 
     updateTodoListMutation.mutateAsync({ id, name });
@@ -182,6 +180,7 @@ function SingleTodoList({ list }) {
                 <input
                   className="w-full p-2 font-bold border border-gray-300 rounded-md text-slate-800 sm:text-sm"
                   type="text"
+                  defaultValue={list.name}
                   {...register("name", { required: true })}
                   // "defaultValu" + "new entered list name" using the registered field named "name" we can access that value (data.name)
                 />
