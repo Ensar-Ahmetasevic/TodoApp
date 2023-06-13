@@ -7,7 +7,7 @@ const FetchTodosData = async (listID) => {
   return response.data;
 };
 
-const TodoItemsQuery = () => {
+const useTodoItemsQuery = () => {
   const router = useRouter();
   const listID = router.query.todoItems;
   return useQuery(["todoItems", listID], () => FetchTodosData(listID));
@@ -15,4 +15,4 @@ const TodoItemsQuery = () => {
   // useQuery("todoItems", FetchTodosData);
 };
 
-export default TodoItemsQuery;
+export default useTodoItemsQuery;

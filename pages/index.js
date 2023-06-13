@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import Layout from "@/components/layout/layout";
 
 function HomePage() {

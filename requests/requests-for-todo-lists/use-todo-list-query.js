@@ -7,8 +7,8 @@ const FetchListsData = async () => {
   return response.data;
 };
 
-const TodoListQuery = () => {
+const useTodoListQuery = () => {
   return useQuery("listItems", FetchListsData);
 };
 
-export default TodoListQuery;
+export default useTodoListQuery;

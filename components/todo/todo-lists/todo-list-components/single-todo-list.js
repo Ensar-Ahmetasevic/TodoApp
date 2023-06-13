@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 
-import TodoListQuery from "../../../../requests/requests-for-todo-lists/todo-list-query";
+import useTodoListQuery from "../../../../requests/requests-for-todo-lists/use-todo-list-query";
 import useDeleteTodoListMutations from "@/requests/requests-for-todo-lists/use-delete-todo-list-mutation";
 import useIsCompletedTodoListMutation from "@/requests/requests-for-todo-lists/use-isCompleted-todo-list-mutation";
 import useUpdateTodoListMutation from "@/requests/requests-for-todo-lists/use-update-todo-list-mutation";
@@ -19,10 +19,15 @@ function SingleTodoList({ list }) {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: list.name, // Set the default value of the input field to the current list name
+    },
+  });
 
-  const { isLoading } = TodoListQuery();
+  const { isLoading } = useTodoListQuery();
 
   const deleteTodoListMutations = useDeleteTodoListMutations();
   const isCompletedTodoListMutation = useIsCompletedTodoListMutation();
@@ -30,11 +35,17 @@ function SingleTodoList({ list }) {
 
   const updateListHandler = (data) => {
     // data from react-hook-form
-    const name = data.name;
+    const name = data.name.trim();
     const id = list.id;
+
+    if (name === "") {
+      reset();
+    }
 
     updateTodoListMutation.mutateAsync({ id, name });
     setListData(false);
+
+    reset();
   };
 
   function toggleisCompleteHandler(id, isComplete) {
@@ -171,10 +182,12 @@ function SingleTodoList({ list }) {
                 <input
                   className="w-full p-2 font-bold border border-gray-300 rounded-md text-slate-800 sm:text-sm"
                   type="text"
-                  defaultValue={list.name}
-                  {...register("name")}
+                  {...register("name", { required: true })}
                   // "defaultValu" + "new entered list name" using the registered field named "name" we can access that value (data.name)
                 />
+              </div>
+              <div className="mt-3 text-sm italic text-gray-300">
+                {errors.name && <p>Please enter your Todo List name.</p>}
               </div>
 
               <div className="mt-5">
@@ -186,7 +199,10 @@ function SingleTodoList({ list }) {
                 </button>
                 <button
                   className="px-2 ml-1 border-2 rounded-md hover:bg-slate-500"
-                  onClick={() => setListData(false)}
+                  onClick={() => {
+                    setListData(false);
+                    reset();
+                  }}
                 >
                   Cancel
                 </button>

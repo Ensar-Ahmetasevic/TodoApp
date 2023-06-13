@@ -2,7 +2,7 @@ import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 
-function UseSignupAuthMutation() {
+function useSignupAuthMutation() {
   const queryClient = useQueryClient();
 
   const signupAuthMutation = async (userData) => {
@@ -30,4 +30,4 @@ function UseSignupAuthMutation() {
   });
 }
 
-export default UseSignupAuthMutation;
+export default useSignupAuthMutation;

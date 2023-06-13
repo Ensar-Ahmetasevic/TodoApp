@@ -1,8 +1,8 @@
 import { sortBy, map, filter } from "lodash";
 import { useRouter } from "next/router";
 
-import TodoListQuery from "../../../requests/requests-for-todo-lists/todo-list-query";
-import TodoItemsQuery from "../../../requests/requests-for-todo-items/todo-items-query";
+import useTodoListQuery from "../../../requests/requests-for-todo-lists/use-todo-list-query";
+import useTodoItemsQuery from "../../../requests/requests-for-todo-items/use-todo-items-query";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import ErrorNotification from "@/helpers/error";
 import SingleTodoItem from "./todo-item-components/single-todo-item";
@@ -11,8 +11,8 @@ function AllTodoItems() {
   const router = useRouter();
   const listID = parseInt(router.query.todoItems);
 
-  const { data: itemsData, error, isLoading, isError } = TodoItemsQuery();
-  const { data: listsData } = TodoListQuery();
+  const { data: itemsData, error, isLoading, isError } = useTodoItemsQuery();
+  const { data: listsData } = useTodoListQuery();
 
   const filterNameById = (listsData, id) => {
     const filteredLists = filter(listsData?.allLists, { id });

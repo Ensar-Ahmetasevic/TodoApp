@@ -1,10 +1,10 @@
 import { sortBy } from "lodash";
 
-import TodoListQuery from "@/requests/requests-for-todo-lists/todo-list-query";
+import useTodoListQuery from "@/requests/requests-for-todo-lists/use-todo-list-query";
 import SingleTodoList from "./todo-list-components/single-todo-list";
 
 function AllTodoLists() {
-  const { data: listsData } = TodoListQuery();
+  const { data: listsData } = useTodoListQuery();
 
   return (
     <section className="grid grid-cols-6 gap-4 mx-20 sm:mx-5">

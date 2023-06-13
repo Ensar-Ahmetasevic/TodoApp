@@ -5,11 +5,11 @@ import AllTodoLists from "@/components/todo/todo-lists/all-todo-lists";
 import FormTodoList from "@/components/todo/todo-lists/form-todo-list";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import ErrorNotification from "@/helpers/error";
-import TodoListQuery from "@/requests/requests-for-todo-lists/todo-list-query";
+import useTodoListQuery from "@/requests/requests-for-todo-lists/use-todo-list-query";
 import { getServerSideProps } from "@/helpers/verification-of-user-auth";
 
 function TodoListsHP() {
-  const { isLoading, isError, error } = TodoListQuery();
+  const { isLoading, isError, error } = useTodoListQuery();
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorNotification error={error} />;

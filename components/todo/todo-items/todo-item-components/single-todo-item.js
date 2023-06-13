@@ -11,7 +11,7 @@ import "slick-carousel/slick/slick-theme.css";
 import LoadingSpinner from "@/helpers/loading-spiner";
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 
-import AwsUrlQuery from "../../../../requests/requests-for-aws-url/url-react-query";
+import useAwsUrlQuery from "../../../../requests/requests-for-aws-url/use-url-react-query";
 
 import useDeleteTodoItemMutation from "@/requests/requests-for-todo-items/use-delete-todo-item-mutation";
 import useIsCompletedTodoItemMutation from "@/requests/requests-for-todo-items/use-isCompleted-todo-item-mutation";
@@ -42,10 +42,10 @@ function SingleTodoItem({ item }) {
     speed: 300,
     slidesToShow: 1,
     slidesToScroll: 1,
-    beforeChange: (current, next) => setSlideIndex(next),
+    beforeChange: (next) => setSlideIndex(next),
   };
 
-  const { data: URLdata } = AwsUrlQuery(item.id);
+  const { data: URLdata } = useAwsUrlQuery(item.id);
 
   const deleteAwsUrlMutation = useDeleteAwsUrlMutation();
   const createAwsUrlMutation = useCreateAwsUrlMutation();

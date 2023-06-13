@@ -14,7 +14,9 @@ function useChangePasswordMutation() {
       return response.data;
     } catch (error) {
       console.error("Failed to change password:", error);
-      toast.error(`Failed to change password: ${error.response.data.message}`);
+      toast.error(`Failed to change password: ${error.response.data.message}`, {
+        autoClose: 2000,
+      });
       throw error; // Throw the error to trigger onError callback
     }
   };

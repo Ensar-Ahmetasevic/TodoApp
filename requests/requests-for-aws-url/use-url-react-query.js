@@ -8,8 +8,8 @@ const FetchAwsUrlData = async (todoId) => {
   return URLdata;
 };
 
-const AwsUrlQuery = (todoId) => {
+const useAwsUrlQuery = (todoId) => {
   return useQuery(["todoURL", todoId], () => FetchAwsUrlData(todoId));
 };
 
-export default AwsUrlQuery;
+export default useAwsUrlQuery;

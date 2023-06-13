@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
 import useChangePasswordMutation from "@/requests/requests-for-user-profile/use-change-password-mutation";
@@ -8,6 +9,9 @@ import useChangePasswordMutation from "@/requests/requests-for-user-profile/use-
 function ChangePasswordForm() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showOldPassword, setShowOldPassword] = useState(false);
+  const [isEitherFieldNotEmpty, setIsEitherFieldNotEmpty] = useState(false);
+
+  const router = useRouter();
 
   const changePasswordMutation = useChangePasswordMutation();
 
@@ -16,6 +20,7 @@ function ChangePasswordForm() {
     handleSubmit,
     reset,
     formState: { errors },
+    watch,
   } = useForm();
 
   async function submitHandler(data) {
@@ -27,9 +32,10 @@ function ChangePasswordForm() {
         oldPassword: enteredOldPassword,
         newPassword: enteredNewPassword,
       });
-      reset();
+      router.replace("/user-profile");
     } catch (error) {
       console.error("Failed to change password:", error);
+      reset();
     }
   }
 
@@ -39,6 +45,14 @@ function ChangePasswordForm() {
   function toggelOldPasswordInput() {
     setShowOldPassword(!showOldPassword);
   }
+
+  const newPasswordValue = watch("newPassword");
+  const oldPasswordValue = watch("oldPassword");
+
+  useEffect(() => {
+    setIsEitherFieldNotEmpty(newPasswordValue || oldPasswordValue);
+    // If either of the values is truthy (not empty), isEitherFieldNotEmpty is set to true. Otherwise, it is set to false.
+  }, [newPasswordValue, oldPasswordValue]);
 
   return (
     <form
@@ -101,10 +115,9 @@ function ChangePasswordForm() {
         </button>
         <Link
           className="border-2 border-white hover:bg-slate-500 ml-3 text-white py-2 px-4 rounded-md "
-          href={".."}
+          href="/user-profile"
         >
-          {" "}
-          Cancel{" "}
+          {isEitherFieldNotEmpty ? "Cancel" : "Back"}
         </Link>
       </div>
     </form>

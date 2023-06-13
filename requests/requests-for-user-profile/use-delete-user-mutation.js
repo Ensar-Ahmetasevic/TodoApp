@@ -21,12 +21,12 @@ function useDeleteUserMutation() {
 
   return useMutation(deleteUserMutation, {
     onSuccess: () => {
-      signOut();
       queryClient.invalidateQueries(); // Invalidate all queries
-
       toast.success("Account is successfully DELETED.", {
         autoClose: 2000,
       });
+
+      signOut();
     },
   });
 }
