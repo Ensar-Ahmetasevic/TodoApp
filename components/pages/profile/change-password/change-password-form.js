@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import LoadingSpinnerButton from "@//components/shared/loading-spiner-button";
 import useChangePasswordMutation from "@/requests/requests-for-user-profile/use-change-password-mutation";
 
 function ChangePasswordForm() {

@@ -8,20 +8,19 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import LoadingSpinner from "@/helpers/loading-spiner";
-import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-
-import useAwsUrlQuery from "../../../../requests/requests-for-aws-url/use-url-react-query";
+import LoadingSpinner from "@/components/shared/loading-spiner";
+import LoadingSpinnerButton from "@/components/shared/loading-spiner-button";
 
 import useDeleteTodoItemMutation from "@/requests/requests-for-todo-items/use-delete-todo-item-mutation";
 import useIsCompletedTodoItemMutation from "@/requests/requests-for-todo-items/use-isCompleted-todo-item-mutation";
 import useUpdateTodoItemMutation from "@/requests/requests-for-todo-items/use-update-todo-item-mutation";
 import useCreateAwsUrlMutation from "@/requests/requests-for-aws-url/use-create-aws-url-mutation";
 import useDeleteAwsUrlMutation from "@/requests/requests-for-aws-url/use-delete-aws-url-mutation";
+import useAwsUrlQuery from "@/requests/requests-for-aws-url/use-url-react-query";
 
 function SingleTodoItem({ item }) {
   //
-  const [toggleUpdateButttom, setToggleUpdateButttom] = useState(false);
+  const [toggleUpdateButttom, setToggleUpdateButttom] = useState(null);
   const [toggleAddFileButttom, setToggleAddFileButttom] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [slideIndex, setSlideIndex] = useState(0);
@@ -68,13 +67,13 @@ function SingleTodoItem({ item }) {
     }
 
     updateTodoItemMutation.mutateAsync({ id, text });
-    setToggleUpdateButttom(false);
+    setToggleUpdateButttom(null);
   }
 
   function toggleisCompleteHandler(id, isComplete) {
     isCompletedTodoItemMutation.mutateAsync({ id, isComplete: !isComplete });
     setToggleAddFileButttom(true);
-    setToggleUpdateButttom(false);
+    setToggleUpdateButttom(null);
   }
 
   function deleteItemHandler(id) {
@@ -178,7 +177,7 @@ function SingleTodoItem({ item }) {
               <>
                 <button
                   className="px-1 border-2 rounded-md hover:bg-amber-400"
-                  onClick={() => setToggleUpdateButttom(true)}
+                  onClick={() => setToggleUpdateButttom(item)}
                 >
                   {updateTodoItemMutation.isLoading ? (
                     <LoadingSpinnerButton />
@@ -333,7 +332,7 @@ function SingleTodoItem({ item }) {
                   <button
                     className="px-1 ml-2 border-2 rounded-md hover:bg-slate-500"
                     onClick={() => {
-                      setToggleUpdateButttom(false);
+                      setToggleUpdateButttom(null);
                       reset();
                     }}
                   >
@@ -343,9 +342,7 @@ function SingleTodoItem({ item }) {
               </form>
             </div>
           </section>
-        ) : (
-          false
-        )}
+        ) : null}
       </div>
     </li>
   );

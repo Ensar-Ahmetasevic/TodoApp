@@ -1,12 +1,12 @@
 import { Fragment } from "react";
 
-import Layout from "@/components/layout/layout";
-import AllTodoLists from "@/components/todo/todo-lists/all-todo-lists";
-import FormTodoList from "@/components/todo/todo-lists/form-todo-list";
-import LoadingSpinner from "@/helpers/loading-spiner";
-import ErrorNotification from "@/helpers/error";
+import Layout from "@/components/pages/layout/layout";
+import AllTodoLists from "@/components/pages/todo/todo-lists/all-todo-lists";
+import FormTodoList from "@/components/pages/todo/todo-lists/form-todo-list";
+import LoadingSpinner from "@/components/shared/loading-spiner";
+import ErrorNotification from "@/components/shared/error";
 import useTodoListQuery from "@/requests/requests-for-todo-lists/use-todo-list-query";
-import { getServerSideProps } from "@/helpers/verification-of-user-auth";
+import { getServerSideProps } from "@/components/shared/verification-of-user-auth";
 
 function TodoListsHP() {
   const { isLoading, isError, error } = useTodoListQuery();

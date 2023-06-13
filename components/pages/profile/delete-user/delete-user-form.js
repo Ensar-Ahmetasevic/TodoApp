@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import Link from "next/link";
 
-import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import LoadingSpinnerButton from "@/components/shared/loading-spiner-button";
 import useDeleteUserMutation from "@/requests/requests-for-user-profile/use-delete-user-mutation";
 
 function DeleteUSerForm() {

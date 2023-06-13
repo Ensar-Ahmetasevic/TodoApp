@@ -3,16 +3,16 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 
-import LoadingSpinner from "@/helpers/loading-spiner";
-import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import LoadingSpinner from "@/components/shared/loading-spiner";
+import LoadingSpinnerButton from "@/components/shared/loading-spiner-button";
 
-import useTodoListQuery from "../../../../requests/requests-for-todo-lists/use-todo-list-query";
 import useDeleteTodoListMutations from "@/requests/requests-for-todo-lists/use-delete-todo-list-mutation";
 import useIsCompletedTodoListMutation from "@/requests/requests-for-todo-lists/use-isCompleted-todo-list-mutation";
 import useUpdateTodoListMutation from "@/requests/requests-for-todo-lists/use-update-todo-list-mutation";
+import useTodoListQuery from "@/requests/requests-for-todo-lists/use-todo-list-query";
 
 function SingleTodoList({ list }) {
-  const [listData, setListData] = useState(false);
+  const [listData, setListData] = useState(null);
 
   const router = useRouter();
 
@@ -41,14 +41,14 @@ function SingleTodoList({ list }) {
     }
 
     updateTodoListMutation.mutateAsync({ id, name });
-    setListData(false);
+    setListData(null);
 
     reset();
   };
 
   function toggleisCompleteHandler(id, isComplete) {
     isCompletedTodoListMutation.mutateAsync({ id, isComplete: !isComplete });
-    setListData(false);
+    setListData(null);
   }
 
   function deleteListHandler(id) {
@@ -142,7 +142,7 @@ function SingleTodoList({ list }) {
               <div className="sm:flex sm:justify-end">
                 <button
                   className="px-2 mx-3 mt-3 mb-3 border-2 rounded-md hover:bg-amber-400 sm:mx-0 sm:mt-2 sm:mb-2"
-                  onClick={() => setListData(true)}
+                  onClick={() => setListData(list)}
                 >
                   {updateTodoListMutation.isLoading ? (
                     <LoadingSpinnerButton />
@@ -199,7 +199,7 @@ function SingleTodoList({ list }) {
                 <button
                   className="px-2 ml-1 border-2 rounded-md hover:bg-slate-500"
                   onClick={() => {
-                    setListData(false);
+                    setListData(null);
                     reset();
                   }}
                 >
@@ -209,9 +209,7 @@ function SingleTodoList({ list }) {
             </form>
           </div>
         </section>
-      ) : (
-        false
-      )}
+      ) : null}
     </li>
   );
 }

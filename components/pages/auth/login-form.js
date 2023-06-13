@@ -1,14 +1,13 @@
 import { useState } from "react";
+import { signIn } from "next-auth/client";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { signIn } from "next-auth/client";
 
-import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
-import useSignupAuthMutation from "@/requests/requests-for-auth/use-signup-auth-mutation";
+import LoadingSpinnerButton from "@/components/shared/loading-spiner-button";
 
-function SignupForm() {
+function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -18,38 +17,26 @@ function SignupForm() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const signupAuthMutation = useSignupAuthMutation();
-
   async function submitHandler(data) {
+    //
     const enteredEmail = data.emailInput;
     const enteredPassword = data.passwordInput;
 
-    try {
-      const result = await signupAuthMutation.mutateAsync({
-        email: enteredEmail,
-        password: enteredPassword,
-      });
+    // "signIn" function is called with the provided credentials (email and password). It returns a "result" object that contains
+    // information about the sign-in process. If "result.error" is falsy, indicating that there was no error during the sign-in
+    // process. In that case, it uses the router.replace function to redirect the user to the specified rout.
 
-      // When user is created, the user automatically sign in and redirected to the Todo Lists page
-      // If the user creation is successful
-      if (result.status) {
-        const singInResult = await signIn("credentials", {
-          redirect: false,
-          email: enteredEmail,
-          password: enteredPassword,
-        });
+    const result = await signIn("credentials", {
+      redirect: false,
+      email: enteredEmail,
+      password: enteredPassword,
+    });
 
-        if (!singInResult.error) {
-          // If there are no errors (!result.error is true), the user is redirected
-          router.replace(`/todos/todo-lists`);
-        } else {
-          toast.error(result.error);
-        }
-      } else {
-        toast.error(result.message);
-      }
-    } catch (error) {
-      console.log(error);
+    if (!result.error) {
+      // If there are no errors (!result.error is true), the user is redirected
+      router.replace(`/todos/todo-lists`);
+    } else {
+      toast.error(result.error);
     }
   }
 
@@ -59,9 +46,7 @@ function SignupForm() {
 
   return (
     <section className="max-w-md w-full mx-auto sm:mt-10">
-      <h1 className="text-3xl text-center font-bold mb-8 sm:text-2xl">
-        SignUp
-      </h1>
+      <h1 className="text-3xl text-center font-bold mb-8 sm:text-2xl">Login</h1>
 
       <form
         className="flex flex-col space-y-4"
@@ -72,22 +57,23 @@ function SignupForm() {
             Your Email
           </label>
           <input
-            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
             {...register("emailInput", { required: true })}
             type="email"
             id="email"
+            required
+            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full"
           />
         </div>
-
         <div className="mb-4 mx-4 relative">
           <label htmlFor="password" className="block mb-1 font-semibold">
             Your Password
           </label>
           <input
-            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full pr-10"
             {...register("passwordInput", { required: true })}
             type={!showPassword ? "password" : "text"}
             id="password"
+            required
+            className="border border-gray-300 font-bold text-slate-800 rounded-md p-2 w-full pr-10"
           />
           <button
             className="absolute top-8 right-2 mt-2 text-xs text-gray-400 hover:text-gray-800 hover:font-bold" // Adjust top, right, and margin properties as needed
@@ -102,15 +88,15 @@ function SignupForm() {
           <button
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 ease-in-out"
             disabled={isSubmitting}
+            type="submit"
           >
-            {isSubmitting ? <LoadingSpinnerButton /> : "Create Account"}
+            {isSubmitting ? <LoadingSpinnerButton /> : "Login"}
           </button>
-
           <Link
             className="text-s text-blue-300 hover:text-blue-500 mt-2 sm:mt-2"
-            href="/auth/login"
+            href="/auth/signup"
           >
-            Login with existing account
+            Create new account
           </Link>
         </div>
       </form>
@@ -118,4 +104,4 @@ function SignupForm() {
   );
 }
 
-export default SignupForm;
+export default LoginForm;

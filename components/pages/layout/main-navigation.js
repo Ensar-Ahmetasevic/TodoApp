@@ -5,28 +5,19 @@ function MainNavigation() {
   const [session, loading] = useSession();
   // "session" object is describing the act of "session"
 
-  function logoutHandler() {
+  function handleLogOut() {
     signOut();
   }
 
   return (
     <header className="bg-gray-700 py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        {!session && !loading ? (
-          <Link
-            href="/"
-            className="text-white font-bold text-xl tracking-tight hover:border-red-500 border-b-2 border-transparent transition duration-200 ease-in-out"
-          >
-            ToDo`s
-          </Link>
-        ) : (
-          <Link
-            href="/todos/todo-lists"
-            className="text-white font-bold text-xl tracking-tight hover:border-red-500 border-b-2 border-transparent transition duration-200 ease-in-out"
-          >
-            ToDo`s
-          </Link>
-        )}
+        <Link
+          className="text-white font-bold text-xl tracking-tight hover:border-red-500 border-b-2 border-transparent transition duration-200 ease-in-out"
+          href={!session && !loading ? "/" : "/todos/todo-lists"}
+        >
+          ToDo`s
+        </Link>
 
         <nav>
           <ul className="items-center flex space-x-4 sm:ml-8">
@@ -41,7 +32,7 @@ function MainNavigation() {
               </li>
             )}
 
-            {session && (
+            {session ? (
               <li>
                 <Link
                   href="/todos/todo-lists"
@@ -50,9 +41,9 @@ function MainNavigation() {
                   My ToDo's
                 </Link>
               </li>
-            )}
+            ) : null}
 
-            {session && (
+            {session ? (
               <li>
                 <Link
                   href="/user-profile"
@@ -61,17 +52,17 @@ function MainNavigation() {
                   Profile
                 </Link>
               </li>
-            )}
-            {session && (
+            ) : null}
+            {session ? (
               <li>
                 <button
                   className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition duration-300 ease-in-out sm:px-1.5 sm:py-1"
-                  onClick={logoutHandler}
+                  onClick={handleLogOut}
                 >
                   Logout
                 </button>
               </li>
-            )}
+            ) : null}
           </ul>
         </nav>
       </div>

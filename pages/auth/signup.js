@@ -1,5 +1,5 @@
-import Layout from "@/components/layout/layout";
-import SignupForm from "@/components/auth/signup-form";
+import Layout from "@/components/pages/layout/layout";
+import SignupForm from "@/components/pages/auth/signup-form";
 
 import { getSession } from "next-auth/client";
 

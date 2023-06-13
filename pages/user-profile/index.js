@@ -1,6 +1,7 @@
 import Link from "next/link";
-import Layout from "@/components/layout/layout";
-import { getServerSideProps } from "@/helpers/verification-of-user-auth";
+
+import Layout from "@/components/pages/layout/layout";
+import { getServerSideProps } from "@/components/shared/verification-of-user-auth";
 
 function UseProfile() {
   return (

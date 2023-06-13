@@ -1,6 +1,6 @@
-import Layout from "@/components/layout/layout";
-import ChangePasswordForm from "@/components/profile/change-password/change-password-form";
-import { getServerSideProps } from "@/helpers/verification-of-user-auth";
+import Layout from "@/components/pages/layout/layout";
+import ChangePasswordForm from "@/components/pages/profile/change-password/change-password-form";
+import { getServerSideProps } from "@/components/shared/verification-of-user-auth";
 
 function ChangePassword() {
   return (

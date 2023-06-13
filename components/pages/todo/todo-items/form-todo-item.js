@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 
-import LoadingSpinnerButton from "@/helpers/loading-spiner-button";
+import LoadingSpinnerButton from "@/components/shared/loading-spiner-button";
 import useCreateTodoItemMutation from "@/requests/requests-for-todo-items/use-create-todo-item-mutation";
 
 function FormTodoItem() {

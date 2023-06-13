@@ -1,5 +1,4 @@
-import { toast } from "react-toastify";
-import Layout from "@/components/layout/layout";
+import Layout from "@/components/pages/layout/layout";
 
 function HomePage() {
   return (

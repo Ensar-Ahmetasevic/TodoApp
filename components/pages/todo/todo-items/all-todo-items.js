@@ -1,11 +1,11 @@
 import { sortBy, map, filter } from "lodash";
 import { useRouter } from "next/router";
 
-import useTodoListQuery from "../../../requests/requests-for-todo-lists/use-todo-list-query";
-import useTodoItemsQuery from "../../../requests/requests-for-todo-items/use-todo-items-query";
-import LoadingSpinner from "@/helpers/loading-spiner";
-import ErrorNotification from "@/helpers/error";
+import LoadingSpinner from "@/components/shared/loading-spiner";
+import ErrorNotification from "@/components/shared/error";
 import SingleTodoItem from "./todo-item-components/single-todo-item";
+import useTodoListQuery from "@/requests/requests-for-todo-lists/use-todo-list-query";
+import useTodoItemsQuery from "@/requests/requests-for-todo-items/use-todo-items-query";
 
 function AllTodoItems() {
   const router = useRouter();
